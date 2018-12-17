@@ -58,6 +58,10 @@ put something like this in your Emacs configuration file:
     (global-set-key (kbd "TAB") 'fancy-dabbrev)
     (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 
+    ;; If you want TAB to indent the line like it usually does when the cursor
+    ;; is not next to an expandable word, use 'fancy-dabbrev-or-indent instead:
+    (global-set-key (kbd "TAB") 'fancy-dabbrev-or-indent)
+
 
 Configuration
 -------------
@@ -84,14 +88,6 @@ Here are the variables that affect `fancy-dabbrev`'s behavior:
   A list of variables which, if bound and non-nil, will inactivate
   `fancy-dabbrev` preview. The variables typically represent major or minor
   modes.
-
-* `fancy-dabbrev-commands` (default: `'(fancy-dabbrev fancy-dabbrev-backward)`)
-
-  A list of commands after which `fancy-dabbrev` should continue to the next
-  expansion candidate. If you write a command of your own that wraps
-  `fancy-dabbrev` or `fancy-dabbrev-backward`, add it to this list to maintain
-  `fancy-dabbrev` functionality.
-
 
 Why?
 ----

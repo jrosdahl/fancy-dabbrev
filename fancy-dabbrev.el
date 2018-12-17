@@ -71,6 +71,11 @@
 ;;   (global-set-key (kbd "TAB") 'fancy-dabbrev)
 ;;   (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 ;;
+;;   ;; If you want TAB to indent the line like it usually does when the cursor
+;;   ;; is not next to an expandable word, use 'fancy-dabbrev-or-indent
+;;   ;; instead:
+;;   (global-set-key (kbd "TAB") 'fancy-dabbrev-or-indent)
+;;
 ;;
 ;; CONFIGURATION
 ;; =============
@@ -99,13 +104,6 @@
 ;;   A list of variables which, if bound and non-nil, will inactivate
 ;;   fancy-dabbrev preview. The variables typically represent major or minor
 ;;   modes.
-;;
-;; * fancy-dabbrev-commands (default: '(fancy-dabbrev fancy-dabbrev-backward))
-;;
-;;   A list of commands after which fancy-dabbrev should continue to the next
-;;   expansion candidate. If you write a command of your own that wraps
-;;   fancy-dabbrev or fancy-dabbrev-backward, add it to this list to maintain
-;;   fancy-dabbrev functionality.
 
 (require 'cl)
 (require 'dabbrev)
@@ -143,14 +141,8 @@ represent major or minor modes."
   :type '(repeat variable)
   :group 'fancy-dabbrev)
 
-(defcustom fancy-dabbrev-commands
-  '(fancy-dabbrev fancy-dabbrev-backward)
-  "A list of commands after which `fancy-dabbrev' should continue
-to the next expansion candidate. If you write a command of your
-own that wraps `fancy-dabbrev' or `fancy-dabbrev-backward', add
-it to this list to maintain `fancy-dabbrev' functionality."
-  :type '(repeat function)
-  :group 'fancy-dabbrev)
+(defconst fancy-dabbrev--commands
+  '(fancy-dabbrev fancy-dabbrev-or-indent fancy-dabbrev-backward))
 
 (defvar fancy-dabbrev--popup nil)
 (defvar fancy-dabbrev--expansions nil)
@@ -181,8 +173,15 @@ popup menu with the expansion candidates."
       (condition-case exit
           (progn (fancy-dabbrev--expand)
                  t)
-        ('error nil))
+        ('error t))
     nil))
+
+(defun fancy-dabbrev-or-indent ()
+  "Executes `fancy-dabbrev' if the cursor is after an expandable
+prefix, otherwise `indent-for-tab-command'."
+  (interactive)
+  (unless (fancy-dabbrev)
+    (indent-for-tab-command)))
 
 (defun fancy-dabbrev-backward ()
   "If run after `fancy-dabbrev', select the previous expansion
@@ -202,7 +201,7 @@ candidate in the menu."
   (looking-back "[A-Za-z0-9_-]"))
 
 (defun fancy-dabbrev--is-fancy-dabbrev-command (command)
-  (memq command fancy-dabbrev-commands))
+  (memq command fancy-dabbrev--commands))
 
 (defun fancy-dabbrev--any-bound-and-true (variables)
   (some (lambda (x) (and (boundp x) (symbol-value x))) variables))
