@@ -42,7 +42,9 @@
 ;;
 ;; 1. Preview: If fancy-dabbrev-mode is enabled, a preview of the first
 ;;    expansion candidate will be shown when any text has been entered. If
-;;    fancy-dabbrev then is called, the candidate will be expanded.
+;;    fancy-dabbrev then is called, the candidate will be expanded. The preview
+;;    will only be shown if no other text (except whitespace) is to the right
+;;    of the cursor.
 ;;
 ;; 2. Popup menu: The first call to fancy-dabbrev will expand the entered word
 ;;    prefix just like dabbrev-expand. But the second call will show a popup
