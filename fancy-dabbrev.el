@@ -4,7 +4,7 @@
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
 ;; License: BSD-3-clause
-;; Package-Requires: (popup)
+;; Package-Requires: ((popup "0.5.3"))
 ;; URL: https://github.com/jrosdahl/fancy-dabbrev
 ;;
 ;; Redistribution and use in source and binary forms, with or without
