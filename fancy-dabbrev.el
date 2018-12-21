@@ -178,7 +178,7 @@ Seqsequent calls will execute `dabbrev-expand' while showing a
 popup menu with the expansion candidates."
   (interactive)
   (if (or (fancy-dabbrev--is-fancy-dabbrev-command last-command)
-          (fancy-dabbrev--looking-at-possibly-expandable))
+          (fancy-dabbrev--looking-back-at-expandable))
       (condition-case exit
           (progn (fancy-dabbrev--expand)
                  t)
@@ -205,9 +205,12 @@ expansion candidate in the menu."
   (let ((message-log-max nil))
     `(with-temp-message (or (current-message) "") ,@body)))
 
-(defun fancy-dabbrev--looking-at-possibly-expandable ()
+(defun fancy-dabbrev--looking-back-at-expandable ()
   ;; TODO: check for symbol according to mode instead?
   (looking-back "[A-Za-z0-9_-]"))
+
+(defun fancy-dabbrev--in-previewable-context ()
+  (looking-at "[[:space:]]*$"))
 
 (defun fancy-dabbrev--is-fancy-dabbrev-command (command)
   (memq command fancy-dabbrev--commands))
@@ -255,8 +258,8 @@ expansion candidate in the menu."
    fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search))
 
 (defun fancy-dabbrev--preview ()
-  (when (and (fancy-dabbrev--looking-at-possibly-expandable)
-             (looking-at "[[:space:]]*$"))
+  (when (and (fancy-dabbrev--looking-back-at-expandable)
+             (fancy-dabbrev--in-previewable-context))
     (let ((expansion
            (fancy-dabbrev--with-suppressed-message
             (fancy-dabbrev--get-first-expansion))))
