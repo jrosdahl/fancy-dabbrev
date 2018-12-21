@@ -37,22 +37,22 @@
 ;;
 ;;; Commentary:
 ;;
-;; fancy-dabbrev acts very similar to the Emacs built-in dabbrev-expand command
-;; but with two improvements:
+;; fancy-dabbrev-expand acts very similar to the Emacs built-in dabbrev-expand
+;; command but with two improvements:
 ;;
 ;; 1. Preview: If fancy-dabbrev-mode is enabled, a preview of the first
 ;;    expansion candidate will be shown when any text has been entered. If
-;;    fancy-dabbrev then is called, the candidate will be expanded. The preview
-;;    will only be shown if no other text (except whitespace) is to the right
-;;    of the cursor.
+;;    fancy-dabbrev-expand then is called, the candidate will be expanded. The
+;;    preview will only be shown if no other text (except whitespace) is to the
+;;    right of the cursor.
 ;;
-;; 2. Popup menu: The first call to fancy-dabbrev will expand the entered word
-;;    prefix just like dabbrev-expand. But the second call will show a popup
-;;    menu with other candidates (with the second candidate selected). The
-;;    third call will advance to the third candidate, etc. It is also possible
-;;    to go back to a previous candidate by calling fancy-dabbrev-backward.
-;;    Selection from the menu can be canceled with C-g. Any cursor movement or
-;;    typing will hide the menu again.
+;; 2. Popup menu: The first call to fancy-dabbrev-expand will expand the
+;;    entered word prefix just like dabbrev-expand. But the second call will
+;;    show a popup menu with other candidates (with the second candidate
+;;    selected). The third call will advance to the third candidate, etc. It is
+;;    also possible to go back to a previous candidate by calling
+;;    fancy-dabbrev-backward. Selection from the menu can be canceled with C-g.
+;;    Any cursor movement or typing will hide the menu again.
 ;;
 ;;
 ;; INSTALLATION
@@ -67,21 +67,27 @@
 ;;   ;; Enable fancy-dabbrev previews in all modes:
 ;;   (global-fancy-dabbrev-mode)
 ;;
-;;   ;; Bind fancy-dabbrev and fancy-dabbrev-backward to your keys of choice:
-;;   (global-set-key (kbd "TAB") 'fancy-dabbrev)
+;;   ;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
+;;   ;; choice:
+;;   (global-set-key (kbd "TAB") 'fancy-dabbrev-expand)
 ;;   (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 ;;
 ;;   ;; If you want TAB to indent the line like it usually does when the cursor
-;;   ;; is not next to an expandable word, use 'fancy-dabbrev-or-indent
+;;   ;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
 ;;   ;; instead:
-;;   (global-set-key (kbd "TAB") 'fancy-dabbrev-or-indent)
+;;   (global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
 ;;
+;; fancy-dabbrev-expand uses dabbrev-expand under the hood, so most dabbrev-*
+;; configuration options affect fancy-dabbrev-expand as well. For instance, if
+;; you want to use fancy-dabbrev-expand when programming, you probably want to
+;; use these dabbrev settings:
 ;;
-;; CONFIGURATION
-;; =============
+;;   ;; Let dabbrev searches ignore case and expansions preserve case:
+;;   (setq dabbrev-case-distinction nil)
+;;   (setq dabbrev-case-fold-search t)
+;;   (setq dabbrev-case-replace nil)
 ;;
-
-;; Here are the variables that affect fancy-dabbrev's behavior:
+;; Here are fancy-dabbrev's own configuration options:
 ;;
 ;; * fancy-dabbrev-menu-height (default: 10)
 ;;
@@ -96,7 +102,7 @@
 ;;
 ;;   A list of variables which, if bound and non-nil, will inactivate
 ;;   fancy-dabbrev expansion. The variables typically represent major or minor
-;;   modes. When inactive, fancy-dabbrev will fall back to running
+;;   modes. When inactive, fancy-dabbrev-expand will fall back to running
 ;;   dabbrev-expand.
 ;;
 ;; * fancy-dabbrev-no-preview-for (default: '(iedit-mode isearch-mode multiple-cursors-mode))
@@ -127,22 +133,25 @@ keystroke."
 (defcustom fancy-dabbrev-no-expansion-for
   '(multiple-cursors-mode)
   "A list of variables which, if bound and non-nil, will
-inactivate `fancy-dabbrev' expansion. The variables typically
-represent major or minor modes. When inactive, `fancy-dabbrev'
-will fall back to running `dabbrev-expand'."
+inactivate fancy-dabbrev expansion. The variables typically
+represent major or minor modes. When inactive,
+`fancy-dabbrev-expand' will fall back to running
+`dabbrev-expand'."
   :type '(repeat variable)
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-no-preview-for
   '(iedit-mode isearch-mode multiple-cursors-mode)
   "A list of variables which, if bound and non-nil, will
-inactivate `fancy-dabbrev' preview. The variables typically
+inactivate fancy-dabbrev preview. The variables typically
 represent major or minor modes."
   :type '(repeat variable)
   :group 'fancy-dabbrev)
 
 (defconst fancy-dabbrev--commands
-  '(fancy-dabbrev fancy-dabbrev-or-indent fancy-dabbrev-backward))
+  '(fancy-dabbrev-expand
+    fancy-dabbrev-expand-or-indent
+    fancy-dabbrev-backward))
 
 (defvar fancy-dabbrev--popup nil)
 (defvar fancy-dabbrev--expansions nil)
@@ -153,7 +162,7 @@ represent major or minor modes."
 
 (defface fancy-dabbrev--menu-face
   '((t (:inherit popup-face)))
-  "Face for fancy-dabbrev menu.")
+  "Face for the fancy-dabbrev menu.")
 
 (defface fancy-dabbrev--selection-face
   '((t (:inherit popup-menu-selection-face)))
@@ -163,7 +172,7 @@ represent major or minor modes."
   '((t (:foreground "#777" :underline t)))
   "Face for the preview.")
 
-(defun fancy-dabbrev ()
+(defun fancy-dabbrev-expand ()
   "Executes `dabbrev-expand' when called the first time.
 Seqsequent calls will execute `dabbrev-expand' while showing a
 popup menu with the expansion candidates."
@@ -176,16 +185,16 @@ popup menu with the expansion candidates."
         ('error t))
     nil))
 
-(defun fancy-dabbrev-or-indent ()
-  "Executes `fancy-dabbrev' if the cursor is after an expandable
-prefix, otherwise `indent-for-tab-command'."
+(defun fancy-dabbrev-expand-or-indent ()
+  "Executes `fancy-dabbrev-expand' if the cursor is after an
+expandable prefix, otherwise `indent-for-tab-command'."
   (interactive)
-  (unless (fancy-dabbrev)
+  (unless (fancy-dabbrev-expand)
     (indent-for-tab-command)))
 
 (defun fancy-dabbrev-backward ()
-  "If run after `fancy-dabbrev', select the previous expansion
-candidate in the menu."
+  "If run after `fancy-dabbrev-expand', select the previous
+expansion candidate in the menu."
   (interactive)
   (if (null fancy-dabbrev--expansions)
       (error "No previous expansion candidate")
