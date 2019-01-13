@@ -1,7 +1,7 @@
 fancy-dabbrev
 =============
 
-fancy-dabbrev essentially wraps Emacs's standard [dabbrev-expand] command, with
+fancy-dabbrev essentially wraps Emacs's standard [dabbrev] functionality, with
 two improvements:
 
 1. **Preview**: If `fancy-dabbrev-mode` is enabled, a preview of the first
@@ -101,8 +101,8 @@ Why?
 
 There are many other Emacs packages for doing more or less advanced
 auto-completion in different ways. After trying out some of the more popular
-ones and not clicking with them, I kept coming back to `dabbrev-expand` due to
-its simplicity. Since I missed the preview feature and a way of selecting
+ones and not clicking with them, I kept coming back to `dabbrev` due to its
+simplicity. Since I missed the preview feature and a way of selecting
 expansions candidates from a menu if the first candidate isn't the right one, I
 wrote `fancy-dabbrev`.
 
@@ -110,4 +110,4 @@ Have fun!
 
 /Joel Rosdahl <joel@rosdahl.net>
 
-[dabbrev-expand]: https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html
+[dabbrev]: https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html
