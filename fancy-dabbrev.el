@@ -37,14 +37,12 @@
 ;;
 ;;; Commentary:
 ;;
-;; fancy-dabbrev-expand acts very similar to the Emacs built-in dabbrev-expand
-;; command but with two improvements:
+;; fancy-dabbrev essentially wraps the Emacs built-in dabbrev functionality,
+;; with two improvements:
 ;;
 ;; 1. Preview: If fancy-dabbrev-mode is enabled, a preview of the first
 ;;    expansion candidate will be shown when any text has been entered. If
-;;    fancy-dabbrev-expand then is called, the candidate will be expanded. The
-;;    preview will only be shown if no other text (except whitespace) is to the
-;;    right of the cursor.
+;;    fancy-dabbrev-expand then is called, the candidate will be expanded.
 ;;
 ;; 2. Popup menu: The first call to fancy-dabbrev-expand will expand the
 ;;    entered word prefix just like dabbrev-expand. But the second call will
@@ -64,7 +62,7 @@
 ;;   ;; Load fancy-dabbrev.el:
 ;;   (require 'fancy-dabbrev)
 ;;
-;;   ;; Enable fancy-dabbrev previews in all modes:
+;;   ;; Enable fancy-dabbrev previews everywhere:
 ;;   (global-fancy-dabbrev-mode)
 ;;
 ;;   ;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
@@ -76,6 +74,10 @@
 ;;   ;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
 ;;   ;; instead:
 ;;   (global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
+;;
+;;
+;; CONFIGURATION
+;; ============
 ;;
 ;; fancy-dabbrev-expand uses dabbrev-expand under the hood, so most dabbrev-*
 ;; configuration options affect fancy-dabbrev-expand as well. For instance, if
@@ -119,6 +121,20 @@
 ;;   A list of variables which, if bound and non-nil, will inactivate
 ;;   fancy-dabbrev preview. The variables typically represent major or minor
 ;;   modes.
+;;
+;; WHY?
+;; ====
+;;
+;; There are many other Emacs packages for doing more or less advanced
+;; auto-completion in different ways. After trying out some of the more popular
+;; ones and not clicking with them, I kept coming back to dabbrev due to its
+;; simplicity. Since I missed the preview feature and a way of selecting
+;; expansions candidates from a menu if the first candidate isn't the right
+;; one, I wrote fancy-dabbrev.
+;;
+;; Have fun!
+;;
+;; /Joel Rosdahl <joel@rosdahl.net>
 
 (require 'cl)
 (require 'dabbrev)

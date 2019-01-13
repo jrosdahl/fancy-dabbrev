@@ -1,19 +1,19 @@
 fancy-dabbrev
 =============
 
-fancy-dabbrev essentially wraps Emacs's standard [dabbrev] functionality, with
-two improvements:
+fancy-dabbrev essentially wraps the Emacs built-in [dabbrev] functionality,
+with two improvements:
 
 1. **Preview**: If `fancy-dabbrev-mode` is enabled, a preview of the first
    expansion candidate will be shown when any text has been entered. If
-   `fancy-dabbrev` then is called, the candidate will be expanded.
-2. **Popup menu**: The first call to `fancy-dabbrev` will expand the entered
-   word prefix just like `dabbrev-expand`. But the second call will show a
-   popup menu with other candidates (with the second candidate selected). The
-   third call will advance to the third candidate, etc. It is also possible to
-   go back to a previous candidate by calling `fancy-dabbrev-backward`.
-   Selection from the menu can be canceled with `C-g`. Any cursor movement or
-   typing will hide the menu again.
+   `fancy-dabbrev-expand` then is called, the candidate will be expanded.
+2. **Popup menu**: The first call to `fancy-dabbrev-expand` will expand the
+   entered word prefix just like `dabbrev-expand`. But the second call will
+   show a popup menu with other candidates (with the second candidate
+   selected). The third call will advance to the third candidate, etc. It is
+   also possible to go back to a previous candidate by calling
+   `fancy-dabbrev-backward`. Selection from the menu can be canceled with
+   `C-g`. Any cursor movement or typing will hide the menu again.
 
 
 Example
@@ -49,22 +49,34 @@ put something like this in your Emacs configuration file:
     ;; Load fancy-dabbrev.el:
     (require 'fancy-dabbrev)
 
-    ;; Enable fancy-dabbrev previews in all modes:
+    ;; Enable fancy-dabbrev previews everywhere:
     (global-fancy-dabbrev-mode)
 
-    ;; Bind fancy-dabbrev and fancy-dabbrev-backward to your keys of choice:
-    (global-set-key (kbd "TAB") 'fancy-dabbrev)
+    ;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
+    ;; choice:
+    (global-set-key (kbd "TAB") 'fancy-dabbrev-expand)
     (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 
     ;; If you want TAB to indent the line like it usually does when the cursor
-    ;; is not next to an expandable word, use 'fancy-dabbrev-or-indent instead:
-    (global-set-key (kbd "TAB") 'fancy-dabbrev-or-indent)
+    ;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
+    ;; instead:
+    (global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
 
 
 Configuration
 -------------
 
-Here are the variables that affect `fancy-dabbrev`'s behavior:
+`fancy-dabbrev-expand` uses `dabbrev-expand` under the hood, so most
+`dabbrev-*` configuration options affect `fancy-dabbrev-expand` as well. For
+instance, if you want to use `fancy-dabbrev-expand` when programming, you
+probably want to use these settings:
+
+    ;; Let dabbrev searches ignore case and expansions preserve case:
+    (setq dabbrev-case-distinction nil)
+    (setq dabbrev-case-fold-search t)
+    (setq dabbrev-case-replace nil)
+
+Here are `fancy-dabbrev`'s own configuration options:
 
 * `fancy-dabbrev-menu-height` (default: `10`)
 
@@ -95,6 +107,7 @@ Here are the variables that affect `fancy-dabbrev`'s behavior:
   A list of variables which, if bound and non-nil, will inactivate
   `fancy-dabbrev` preview. The variables typically represent major or minor
   modes.
+
 
 Why?
 ----
