@@ -206,6 +206,7 @@ represent major or minor modes."
   '((t (:foreground "#777" :underline t)))
   "Face for the preview.")
 
+;;;###autoload
 (defun fancy-dabbrev-expand ()
   "Executes `dabbrev-expand' when called the first time.
 Seqsequent calls will execute `dabbrev-expand' while showing a
@@ -219,6 +220,7 @@ popup menu with the expansion candidates."
         ('error t))
     nil))
 
+;;;###autoload
 (defun fancy-dabbrev-expand-or-indent ()
   "Executes `fancy-dabbrev-expand' if the cursor is after an
 expandable prefix, otherwise `indent-for-tab-command'."
@@ -226,6 +228,7 @@ expandable prefix, otherwise `indent-for-tab-command'."
   (unless (fancy-dabbrev-expand)
     (indent-for-tab-command)))
 
+;;;###autoload
 (defun fancy-dabbrev-backward ()
   "If run after `fancy-dabbrev-expand', select the previous
 expansion candidate in the menu."
@@ -371,6 +374,7 @@ expansion candidate in the menu."
   (when (fancy-dabbrev--is-fancy-dabbrev-command last-command)
     (fancy-dabbrev--insert-expansion fancy-dabbrev--entered-abbrev)))
 
+;;;###autoload
 (define-minor-mode fancy-dabbrev-mode
   "fancy dabbrev mode"
   :lighter " FD"
