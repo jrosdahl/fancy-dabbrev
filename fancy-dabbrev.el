@@ -105,7 +105,8 @@
 ;;   modes. When inactive, fancy-dabbrev-expand will fall back to running
 ;;   dabbrev-expand.
 ;;
-;; * fancy-dabbrev-no-preview-for (default: '(iedit-mode isearch-mode multiple-cursors-mode))
+;; * fancy-dabbrev-no-preview-for (default: '(iedit-mode isearch-mode
+;;   multiple-cursors-mode))
 ;;
 ;;   A list of variables which, if bound and non-nil, will inactivate
 ;;   fancy-dabbrev preview. The variables typically represent major or minor
