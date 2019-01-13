@@ -98,6 +98,14 @@
 ;;   How long (in seconds) to wait until displaying the preview after a
 ;;   keystroke.
 ;;
+;; * fancy-dabbrev-preview-context (default: 'at-eol)
+;;
+;;   When to show the preview. If 'at-eol, only show the preview if no other
+;;   text (except whitespace) is to the right of the cursor. If
+;;   'before-non-word, show the preview whenever the cursor is not immediately
+;;   before (or inside) a word. If 'everywhere, always show the preview after
+;;   typing.
+;;
 ;; * fancy-dabbrev-no-expansion-for (default: '(multiple-cursors-mode))
 ;;
 ;;   A list of variables which, if bound and non-nil, will inactivate
@@ -129,6 +137,15 @@
   "How long to wait until displaying the preview after
 keystroke."
   :type 'float
+  :group 'fancy-dabbrev)
+
+(defcustom fancy-dabbrev-preview-context
+  'at-eol
+  "When to show the preview."
+  :type '(choice (const :tag "Only at end of lines" at-eol)
+                 (const :tag "When cursor is not immediately before a word"
+                        before-non-word)
+                 (const :tag "Everywhere" everywhere))
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-no-expansion-for
@@ -210,7 +227,13 @@ expansion candidate in the menu."
   (thing-at-point 'symbol))
 
 (defun fancy-dabbrev--in-previewable-context ()
-  (looking-at "[[:space:]]*$"))
+  (cond ((eq fancy-dabbrev-preview-context 'at-eol)
+         (looking-at "[[:space:]]*$"))
+        ((eq fancy-dabbrev-preview-context 'before-non-word)
+         (looking-at "[^[:word:]]"))
+        ((eq fancy-dabbrev-preview-context 'everywhere)
+         t)
+        (t nil)))
 
 (defun fancy-dabbrev--is-fancy-dabbrev-command (command)
   (memq command fancy-dabbrev--commands))

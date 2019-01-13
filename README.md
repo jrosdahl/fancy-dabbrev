@@ -6,9 +6,7 @@ two improvements:
 
 1. **Preview**: If `fancy-dabbrev-mode` is enabled, a preview of the first
    expansion candidate will be shown when any text has been entered. If
-   `fancy-dabbrev` then is called, the candidate will be expanded. The preview
-    will only be shown if no other text (except whitespace) is to the right
-    of the cursor.
+   `fancy-dabbrev` then is called, the candidate will be expanded.
 2. **Popup menu**: The first call to `fancy-dabbrev` will expand the entered
    word prefix just like `dabbrev-expand`. But the second call will show a
    popup menu with other candidates (with the second candidate selected). The
@@ -75,6 +73,14 @@ Here are the variables that affect `fancy-dabbrev`'s behavior:
 * `fancy-dabbrev-preview-delay` (default: `0.2`)
 
   How long (in seconds) to wait until displaying the preview after a keystroke.
+
+* `fancy-dabbrev-preview-context` (default: `'at-eol`)
+
+  When to show the preview. If `'at-eol`, only show the preview if no other
+  text (except whitespace) is to the right of the cursor. If
+  `'before-non-word`, show the preview whenever the cursor is not immediately
+  before (or inside) a word. If `'everywhere`, always show the preview after
+  typing.
 
 * `fancy-dabbrev-no-expansion-for` (default: `'(multiple-cursors-mode)`)
 
