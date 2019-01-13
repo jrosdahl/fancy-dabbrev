@@ -376,7 +376,14 @@ expansion candidate in the menu."
 
 ;;;###autoload
 (define-minor-mode fancy-dabbrev-mode
-  "fancy dabbrev mode"
+  "Toggle fancy-dabbrev-mode.
+
+With a prefix argument ARG, enable fancy-dabbrev-mode if ARG is
+positive, and disable it otherwise. If called from Lisp, enable
+the mode if ARG is omitted or nil.
+
+When fancy-dabbrev-mode is enabled, fancy-dabbrev's preview
+functionality is activated."
   :lighter " FD"
   :init-value nil
   (if fancy-dabbrev-mode
