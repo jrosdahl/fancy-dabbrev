@@ -1,6 +1,6 @@
 ;;; fancy-dabbrev.el --- dabbrev-expand with preview and popup menu
 ;;
-;; Copyright (C) 2018 Joel Rosdahl
+;; Copyright (C) 2018-2019 Joel Rosdahl
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
 ;; License: BSD-3-clause
@@ -206,8 +206,7 @@ expansion candidate in the menu."
     `(with-temp-message (or (current-message) "") ,@body)))
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
-  ;; TODO: check for symbol according to mode instead?
-  (looking-back "[A-Za-z0-9_-]"))
+  (thing-at-point 'symbol))
 
 (defun fancy-dabbrev--in-previewable-context ()
   (looking-at "[[:space:]]*$"))
