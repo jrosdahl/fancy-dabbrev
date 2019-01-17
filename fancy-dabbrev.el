@@ -243,7 +243,9 @@ expansion candidate in the menu."
     `(with-temp-message (or (current-message) "") ,@body)))
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
-  (thing-at-point 'symbol))
+  (and (not (bolp))
+       (looking-back "[^[:space:]]")
+       (thing-at-point 'symbol)))
 
 (defun fancy-dabbrev--in-previewable-context ()
   (cond ((eq fancy-dabbrev-preview-context 'at-eol)
