@@ -251,7 +251,7 @@ expansion candidate in the menu."
   (cond ((eq fancy-dabbrev-preview-context 'at-eol)
          (looking-at "[[:space:]]*$"))
         ((eq fancy-dabbrev-preview-context 'before-non-word)
-         (looking-at "[^[:word:]_]"))
+         (looking-at "$\\|[^[:word:]_]"))
         ((eq fancy-dabbrev-preview-context 'everywhere)
          t)
         (t nil)))
