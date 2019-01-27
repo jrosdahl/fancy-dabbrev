@@ -324,11 +324,23 @@ expansion candidate in the menu."
       (setq fancy-dabbrev--expansions (list expansion))
       (fancy-dabbrev--insert-expansion expansion))))
 
+(defun fancy-dabbrev--get-popup-point ()
+  (let* ((start (fancy-dabbrev--abbrev-start-location))
+         (start-col (save-excursion (goto-char start) (current-column)))
+         (end-col (+ start-col (length (car fancy-dabbrev--expansions))))
+         (width (window-width)))
+    (if (and (< start-col width) (> end-col width))
+        (save-excursion
+          (goto-char start)
+          (forward-line)
+          (point))
+      (fancy-dabbrev--abbrev-start-location))))
+
 (defun fancy-dabbrev--expand-again (next)
   (fancy-dabbrev--init-expansions)
   (unless fancy-dabbrev--popup
     (setq fancy-dabbrev--popup
-          (popup-create (fancy-dabbrev--abbrev-start-location)
+          (popup-create (fancy-dabbrev--get-popup-point)
                         (apply 'max (mapcar 'length fancy-dabbrev--expansions))
                         fancy-dabbrev-menu-height
                         :around t
