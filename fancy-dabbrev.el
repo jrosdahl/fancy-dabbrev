@@ -325,16 +325,14 @@ expansion candidate in the menu."
       (fancy-dabbrev--insert-expansion expansion))))
 
 (defun fancy-dabbrev--get-popup-point ()
-  (let* ((start (fancy-dabbrev--abbrev-start-location))
-         (start-col (save-excursion (goto-char start) (current-column)))
-         (end-col (+ start-col (length (car fancy-dabbrev--expansions))))
-         (width (window-width)))
-    (if (and (< start-col width) (> end-col width))
+  (let ((start (fancy-dabbrev--abbrev-start-location))
+        (line-width (- (line-end-position) (line-beginning-position))))
+    (if (> line-width (window-width))
         (save-excursion
           (goto-char start)
           (forward-line)
           (point))
-      (fancy-dabbrev--abbrev-start-location))))
+      start)))
 
 (defun fancy-dabbrev--expand-again (next)
   (fancy-dabbrev--init-expansions)
