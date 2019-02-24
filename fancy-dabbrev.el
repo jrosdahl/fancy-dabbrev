@@ -150,14 +150,18 @@
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-preview-delay 0.2
-  "How long to wait until displaying the preview after
-keystroke."
+  "How long (in seconds) to wait until displaying the preview
+after a keystroke."
   :type 'float
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-preview-context
   'at-eol
-  "When to show the preview."
+  "When to show the preview. If 'at-eol, only show the preview if
+no other text (except whitespace) is to the right of the cursor.
+If 'before-non-word, show the preview whenever the cursor is not
+immediately before (or inside) a word. If 'everywhere, always
+show the preview after typing."
   :type '(choice (const :tag "Only at end of lines" at-eol)
                  (const :tag "When cursor is not immediately before a word"
                         before-non-word)
