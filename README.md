@@ -21,23 +21,23 @@ Example
 
 After typing "defi":
 
-![Example 1](fancy-dabbrev-1.png)
+![Example 1](images/fancy-dabbrev-1.png)
 
 After pressing TAB (assuming it is bound to `fancy-dabbrev-expand`):
 
-![Example 2](fancy-dabbrev-2.png)
+![Example 2](images/fancy-dabbrev-2.png)
 
 After pressing TAB a second time:
 
-![Example 3](fancy-dabbrev-3.png)
+![Example 3](images/fancy-dabbrev-3.png)
 
 After pressing TAB a third time:
 
-![Example 4](fancy-dabbrev-4.png)
+![Example 4](images/fancy-dabbrev-4.png)
 
 After pressing space:
 
-![Example 5](fancy-dabbrev-5.png)
+![Example 5](images/fancy-dabbrev-5.png)
 
 
 Installation
