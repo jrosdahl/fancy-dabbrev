@@ -46,21 +46,23 @@ Installation
 To load `fancy-dabbrev`, store `fancy-dabbrev.el` in your Emacs load path and
 put something like this in your Emacs configuration file:
 
-    ;; Load fancy-dabbrev.el:
-    (require 'fancy-dabbrev)
+```elisp
+;; Load fancy-dabbrev.el:
+(require 'fancy-dabbrev)
 
-    ;; Enable fancy-dabbrev previews everywhere:
-    (global-fancy-dabbrev-mode)
+;; Enable fancy-dabbrev previews everywhere:
+(global-fancy-dabbrev-mode)
 
-    ;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
-    ;; choice:
-    (global-set-key (kbd "TAB") 'fancy-dabbrev-expand)
-    (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
+;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
+;; choice:
+(global-set-key (kbd "TAB") 'fancy-dabbrev-expand)
+(global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 
-    ;; If you want TAB to indent the line like it usually does when the cursor
-    ;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
-    ;; instead:
-    (global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
+;; If you want TAB to indent the line like it usually does when the cursor
+;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
+;; instead:
+(global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
+```
 
 
 Configuration
@@ -71,10 +73,13 @@ Configuration
 instance, if you want to use `fancy-dabbrev-expand` when programming, you
 probably want to use these settings:
 
-    ;; Let dabbrev searches ignore case and expansions preserve case:
-    (setq dabbrev-case-distinction nil)
-    (setq dabbrev-case-fold-search t)
-    (setq dabbrev-case-replace nil)
+
+```elisp
+;; Let dabbrev searches ignore case and expansions preserve case:
+(setq dabbrev-case-distinction nil)
+(setq dabbrev-case-fold-search t)
+(setq dabbrev-case-replace nil)
+```
 
 Here are `fancy-dabbrev`'s own configuration options:
 
