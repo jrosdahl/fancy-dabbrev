@@ -23,7 +23,7 @@ After typing "defi":
 
 ![Example 1](fancy-dabbrev-1.png)
 
-After pressing TAB (assuming it is bound to `fancy-dabbrev`):
+After pressing TAB (assuming it is bound to `fancy-dabbrev-expand`):
 
 ![Example 2](fancy-dabbrev-2.png)
 
@@ -98,7 +98,7 @@ Here are `fancy-dabbrev`'s own configuration options:
 
   A list of variables which, if bound and non-nil, will inactivate
   `fancy-dabbrev` expansion. The variables typically represent major or minor
-  modes. When inactive, `fancy-dabbrev` will fall back to running
+  modes. When inactive, `fancy-dabbrev-expand` will fall back to running
   `dabbrev-expand`.
 
 * `fancy-dabbrev-no-preview-for` (default:
