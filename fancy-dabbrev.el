@@ -216,20 +216,15 @@ represent major or minor modes."
 Seqsequent calls will execute `dabbrev-expand' while showing a
 popup menu with the expansion candidates."
   (interactive)
-  (if (or (fancy-dabbrev--is-fancy-dabbrev-command last-command)
-          (fancy-dabbrev--looking-back-at-expandable))
-      (condition-case exit
-          (progn (fancy-dabbrev--expand)
-                 t)
-        ('error t))
-    nil))
+  (unless (fancy-dabbrev--expand)
+    (error "No expansion possible here")))
 
 ;;;###autoload
 (defun fancy-dabbrev-expand-or-indent ()
   "Executes `fancy-dabbrev-expand' if the cursor is after an
 expandable prefix, otherwise `indent-for-tab-command'."
   (interactive)
-  (unless (fancy-dabbrev-expand)
+  (unless (fancy-dabbrev--expand)
     (indent-for-tab-command)))
 
 ;;;###autoload
@@ -237,9 +232,11 @@ expandable prefix, otherwise `indent-for-tab-command'."
   "If run after `fancy-dabbrev-expand', select the previous
 expansion candidate in the menu."
   (interactive)
-  (if (null fancy-dabbrev--expansions)
-      (error "No previous expansion candidate")
-    (fancy-dabbrev--expand-again nil)))
+  (if (and fancy-dabbrev--expansions
+           (fancy-dabbrev--is-fancy-dabbrev-command last-command))
+      (fancy-dabbrev--expand-again nil)
+    (setq fancy-dabbrev--expansions nil)
+    (error "No previous expansion candidate")))
 
 (defmacro fancy-dabbrev--with-suppressed-message (&rest body)
   (declare (indent 0))
@@ -267,12 +264,19 @@ expansion candidate in the menu."
   (some (lambda (x) (and (boundp x) (symbol-value x))) variables))
 
 (defun fancy-dabbrev--expand ()
-  (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
-      (dabbrev-expand nil)
-    (add-hook 'post-command-hook 'fancy-dabbrev--post-command-hook)
-    (if (fancy-dabbrev--is-fancy-dabbrev-command last-command)
-        (fancy-dabbrev--expand-again t)
-      (fancy-dabbrev--expand-first-time))))
+  (let ((last-command-did-expand
+         (and (fancy-dabbrev--is-fancy-dabbrev-command last-command)
+              fancy-dabbrev--expansions)))
+    (if (not (or last-command-did-expand
+                 (fancy-dabbrev--looking-back-at-expandable)))
+        (setq fancy-dabbrev--expansions nil)
+      (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
+          (dabbrev-expand nil)
+        (add-hook 'post-command-hook 'fancy-dabbrev--post-command-hook)
+        (if last-command-did-expand
+            (fancy-dabbrev--expand-again t)
+          (fancy-dabbrev--expand-first-time)))
+      t)))
 
 (defun fancy-dabbrev--pre-command-hook ()
   (when fancy-dabbrev--preview-overlay
@@ -321,6 +325,7 @@ expansion candidate in the menu."
            fancy-dabbrev--preview-overlay 'after-string expansion))))))
 
 (defun fancy-dabbrev--expand-first-time ()
+  (setq fancy-dabbrev--expansions nil)
   (let* ((expansion (fancy-dabbrev--get-first-expansion)))
     (if (null expansion)
         (error "No expansion found for \"%s\"" fancy-dabbrev--entered-abbrev)
