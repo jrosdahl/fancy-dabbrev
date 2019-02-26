@@ -300,17 +300,16 @@ expansion candidate in the menu."
   (insert expansion))
 
 (defun fancy-dabbrev--get-first-expansion ()
-  (dabbrev--reset-global-variables)
-  (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
-  (dabbrev--find-expansion
-   fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search))
+  (fancy-dabbrev--with-suppressed-message
+    (dabbrev--reset-global-variables)
+    (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
+    (dabbrev--find-expansion
+     fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search)))
 
 (defun fancy-dabbrev--preview ()
   (when (and (fancy-dabbrev--looking-back-at-expandable)
              (fancy-dabbrev--in-previewable-context))
-    (let ((expansion
-           (fancy-dabbrev--with-suppressed-message
-            (fancy-dabbrev--get-first-expansion))))
+    (let ((expansion (fancy-dabbrev--get-first-expansion)))
       (when expansion
         (let ((expansion
                (substring expansion (length fancy-dabbrev--entered-abbrev))))
