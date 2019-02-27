@@ -149,6 +149,15 @@
   :type 'integer
   :group 'fancy-dabbrev)
 
+(defcustom fancy-dabbrev-sort-menu
+  t
+  "If nil, the popup menu will show matching candidates in the
+order that repeated calls to dabbrev-expand would return, i.e.
+roughly based on locality. If t, the candidates (except the first
+one) will be sorted."
+  :type 'boolean
+  :group 'fancy-dabbrev)
+
 (defcustom fancy-dabbrev-preview-delay 0.2
   "How long (in seconds) to wait until displaying the preview
 after a keystroke."
@@ -370,18 +379,22 @@ expansion candidate in the menu."
 (defun fancy-dabbrev--init-expansions ()
   (when (= (length fancy-dabbrev--expansions) 1)
     (let ((i 1)
-          expansion)
+          expansion
+          new-expansions)
       (while (and (< i fancy-dabbrev-menu-height)
                   (setq expansion
                         (dabbrev--find-expansion
                          fancy-dabbrev--entered-abbrev
                          0
                          dabbrev-case-fold-search)))
-        (setq fancy-dabbrev--expansions
-              (cons expansion fancy-dabbrev--expansions))
-        (setq i (1+ i))))
-    (setq fancy-dabbrev--expansions (reverse fancy-dabbrev--expansions))
-    (setq fancy-dabbrev--selected-expansion 0)))
+        (setq new-expansions (cons expansion new-expansions))
+        (setq i (1+ i)))
+      (setq fancy-dabbrev--expansions
+            (cons (car fancy-dabbrev--expansions)
+                  (if fancy-dabbrev-sort-menu
+                      (sort new-expansions 'string<)
+                    (reverse new-expansions))))
+      (setq fancy-dabbrev--selected-expansion 0))))
 
 (defun fancy-dabbrev--on-exit ()
   (when fancy-dabbrev--popup
