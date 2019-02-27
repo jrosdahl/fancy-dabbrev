@@ -101,7 +101,7 @@ Here are `fancy-dabbrev`'s own configuration options:
 
 * `fancy-dabbrev-no-expansion-for` (default: `'(multiple-cursors-mode)`)
 
-  A list of variables which, if bound and non-nil, will inactivate
+  A list of variables which, if bound and non-`nil`, will inactivate
   `fancy-dabbrev` expansion. The variables typically represent major or minor
   modes. When inactive, `fancy-dabbrev-expand` will fall back to running
   `dabbrev-expand`.
@@ -109,7 +109,7 @@ Here are `fancy-dabbrev`'s own configuration options:
 * `fancy-dabbrev-no-preview-for` (default:
   `'(iedit-mode isearch-mode multiple-cursors-mode)`)
 
-  A list of variables which, if bound and non-nil, will inactivate
+  A list of variables which, if bound and non-`nil`, will inactivate
   `fancy-dabbrev` preview. The variables typically represent major or minor
   modes.
 
