@@ -392,7 +392,10 @@ expansion candidate in the menu."
       (setq fancy-dabbrev--expansions
             (cons (car fancy-dabbrev--expansions)
                   (if fancy-dabbrev-sort-menu
-                      (sort new-expansions 'string<)
+                      (sort new-expansions
+                            (if (fboundp 'string-collate-lessp)
+                                'string-collate-lessp
+                              'string<))
                     (reverse new-expansions))))
       (setq fancy-dabbrev--selected-expansion 0))))
 
