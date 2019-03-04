@@ -150,10 +150,11 @@
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-sort-menu
-  t
+  nil
   "If nil, the popup menu will show matching candidates in the
-order that repeated calls to dabbrev-expand would return, i.e.
-roughly based on locality. If t, the candidates (except the first
+order that repeated calls to dabbrev-expand would return (i.e.,
+first candidates before the cursor, then after the cursor and
+then from other buffers). If t, the candidates (except the first
 one) will be sorted."
   :type 'boolean
   :group 'fancy-dabbrev)

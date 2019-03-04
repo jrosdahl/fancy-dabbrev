@@ -87,11 +87,12 @@ Here are `fancy-dabbrev`'s own configuration options:
 
   How many expansion candidates to show in the menu.
 
-* `fancy-dabbrev-sort-menu` (default `t`)
+* `fancy-dabbrev-sort-menu` (default `nil`)
 
   If `nil`, the popup menu will show matching candidates in the order that
-  repeated calls to `dabbrev-expand` would return, i.e. roughly based on
-  locality. If `t`, the candidates (except the first one) will be sorted.
+  repeated calls to `dabbrev-expand` would return (i.e., first candidates
+  before the cursor, then after the cursor and then from other buffers). If
+  `t`, the candidates (except the first one) will be sorted.
 
 * `fancy-dabbrev-preview-delay` (default: `0.2`)
 
