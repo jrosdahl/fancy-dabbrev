@@ -31,6 +31,9 @@ After pressing TAB a second time:
 
 ![Example 3](images/fancy-dabbrev-3.png)
 
+The menu entries are by default sorted on proximity. This can changed with the
+`fancy-dabbrev-sort-menu` configuration option.
+
 After pressing TAB a third time:
 
 ![Example 4](images/fancy-dabbrev-4.png)
