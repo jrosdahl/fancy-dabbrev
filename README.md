@@ -46,8 +46,12 @@ After pressing space:
 Installation
 ------------
 
-To load `fancy-dabbrev`, store `fancy-dabbrev.el` in your Emacs load path and
-put something like this in your Emacs configuration file:
+`fancy-dabbrev` depends on the
+[popup](https://github.com/auto-complete/popup-el) package, so you need to
+install that first if you don't have it already.
+
+To load `fancy-dabbrev` itself, store `fancy-dabbrev.el` in your Emacs load
+path and put something like this in your Emacs configuration file:
 
 ```elisp
 ;; Load fancy-dabbrev.el:
@@ -57,14 +61,15 @@ put something like this in your Emacs configuration file:
 (global-fancy-dabbrev-mode)
 
 ;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
-;; choice:
-(global-set-key (kbd "TAB") 'fancy-dabbrev-expand)
+;; choice, here "TAB" and "Shift+TAB":
+(global-set-key (kbd "<tab>") 'fancy-dabbrev-expand)
 (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 
 ;; If you want TAB to indent the line like it usually does when the cursor
 ;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
-;; instead:
-(global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
+;; instead of `fancy-dabbrev-expand`:
+(global-set-key (kbd "<tab>") 'fancy-dabbrev-expand-or-indent)
+(global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 ```
 
 
