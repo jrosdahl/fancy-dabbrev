@@ -1,4 +1,4 @@
-;;; fancy-dabbrev.el --- dabbrev-expand with preview and popup menu
+;;; fancy-dabbrev.el --- Like dabbrev-expand with preview and popup menu
 ;;
 ;; Copyright (C) 2018-2019 Joel Rosdahl
 ;;
@@ -139,7 +139,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'dabbrev)
 (require 'popup)
 
@@ -274,7 +274,7 @@ expansion candidate in the menu."
   (memq command fancy-dabbrev--commands))
 
 (defun fancy-dabbrev--any-bound-and-true (variables)
-  (some (lambda (x) (and (boundp x) (symbol-value x))) variables))
+  (cl-some (lambda (x) (and (boundp x) (symbol-value x))) variables))
 
 (defun fancy-dabbrev--expand ()
   (let ((last-command-did-expand
@@ -433,12 +433,11 @@ functionality is activated."
     (remove-hook 'pre-command-hook 'fancy-dabbrev--pre-command-hook t)
     (remove-hook 'post-command-hook 'fancy-dabbrev--post-command-hook t)))
 
-(defun turn-on-fancy-dabbrev-mode ()
-  (fancy-dabbrev-mode 1))
-
 ;;;###autoload
 (define-globalized-minor-mode global-fancy-dabbrev-mode
   fancy-dabbrev-mode
-  turn-on-fancy-dabbrev-mode)
+  (lambda () (fancy-dabbrev-mode 1)))
 
 (provide 'fancy-dabbrev)
+
+;;; fancy-dabbrev.el ends here
