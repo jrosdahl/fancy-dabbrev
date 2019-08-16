@@ -3,6 +3,7 @@
 ;; Copyright (C) 2018-2019 Joel Rosdahl
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
+;; Version: 1.0
 ;; License: BSD-3-clause
 ;; Package-Requires: ((popup "0.5.3"))
 ;; URL: https://github.com/jrosdahl/fancy-dabbrev
@@ -135,6 +136,8 @@
 ;; Have fun!
 ;;
 ;; /Joel Rosdahl <joel@rosdahl.net>
+
+;;; Code:
 
 (require 'cl)
 (require 'dabbrev)
