@@ -154,27 +154,32 @@
 
 (defcustom fancy-dabbrev-sort-menu
   nil
-  "If nil, the popup menu will show matching candidates in the
-order that repeated calls to dabbrev-expand would return (i.e.,
-first candidates before the cursor, then after the cursor and
-then from other buffers). If t, the candidates (except the first
-one) will be sorted."
+  "Determine the order of matching candidates in the popup menu.
+
+If nil, the popup menu will show matching candidates in the order
+that repeated calls to ‘dabbrev-expand’ would return (i.e., first
+candidates before the cursor, then after the cursor and then from
+other buffers). If t, the candidates (except the first one) will
+be sorted."
   :type 'boolean
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-preview-delay 0.2
-  "How long (in seconds) to wait until displaying the preview
-after a keystroke."
+  "How long to wait until displaying the preview after a keystroke.
+
+The value is in seconds."
   :type 'float
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-preview-context
   'at-eol
-  "When to show the preview. If 'at-eol, only show the preview if
-no other text (except whitespace) is to the right of the cursor.
-If 'before-non-word, show the preview whenever the cursor is not
-immediately before (or inside) a word. If 'everywhere, always
-show the preview after typing."
+  "When to show the preview.
+
+If 'at-eol, only show the preview if no other text (except
+whitespace) is to the right of the cursor. If 'before-non-word,
+show the preview whenever the cursor is not immediately
+before (or inside) a word. If 'everywhere, always show the
+preview after typing."
   :type '(choice (const :tag "Only at end of lines" at-eol)
                  (const :tag "When cursor is not immediately before a word"
                         before-non-word)
@@ -183,7 +188,9 @@ show the preview after typing."
 
 (defcustom fancy-dabbrev-no-expansion-for
   '(multiple-cursors-mode)
-  "A list of variables which, if bound and non-nil, will
+  "Determine when to disable expansion.
+
+This is a list of variables which, if bound and non-nil, will
 inactivate fancy-dabbrev expansion. The variables typically
 represent major or minor modes. When inactive,
 `fancy-dabbrev-expand' will fall back to running
@@ -193,7 +200,9 @@ represent major or minor modes. When inactive,
 
 (defcustom fancy-dabbrev-no-preview-for
   '(iedit-mode isearch-mode multiple-cursors-mode)
-  "A list of variables which, if bound and non-nil, will
+  "Determine when to disable preview.
+
+This is a list of variables which, if bound and non-nil, will
 inactivate fancy-dabbrev preview. The variables typically
 represent major or minor modes."
   :type '(repeat variable)
@@ -225,25 +234,31 @@ represent major or minor modes."
 
 ;;;###autoload
 (defun fancy-dabbrev-expand ()
-  "Executes `dabbrev-expand' when called the first time.
-Seqsequent calls will execute `dabbrev-expand' while showing a
-popup menu with the expansion candidates."
+  "Expand previous word \"dynamically\", potentially with a popup menu.
+
+This function executes `dabbrev-expand' when called the first
+time. Seqsequent calls will execute `dabbrev-expand' while
+showing a popup menu with the expansion candidates."
   (interactive)
   (unless (fancy-dabbrev--expand)
     (error "No expansion possible here")))
 
 ;;;###autoload
 (defun fancy-dabbrev-expand-or-indent ()
-  "Executes `fancy-dabbrev-expand' if the cursor is after an
-expandable prefix, otherwise `indent-for-tab-command'."
+  "Expand previous word \"dynamically\" or indent.
+
+This function executes `fancy-dabbrev-expand' if the cursor is
+after an expandable prefix, otherwise `indent-for-tab-command'."
   (interactive)
   (unless (fancy-dabbrev--expand)
     (indent-for-tab-command)))
 
 ;;;###autoload
 (defun fancy-dabbrev-backward ()
-  "If run after `fancy-dabbrev-expand', select the previous
-expansion candidate in the menu."
+  "Select the previous expansion candidate.
+
+If run after `fancy-dabbrev-expand', this function selects the
+previous expansion candidate in the menu."
   (interactive)
   (if (and fancy-dabbrev--expansions
            (fancy-dabbrev--is-fancy-dabbrev-command last-command))
