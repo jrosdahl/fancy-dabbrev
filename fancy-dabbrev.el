@@ -1,11 +1,11 @@
-;;; fancy-dabbrev.el --- Like dabbrev-expand with preview and popup menu
+;;; fancy-dabbrev.el --- Like dabbrev-expand with preview and popup menu -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2018-2019 Joel Rosdahl
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
 ;; Version: 1.0
 ;; License: BSD-3-clause
-;; Package-Requires: ((popup "0.5.3"))
+;; Package-Requires: ((emacs "24") (popup "0.5.3"))
 ;; URL: https://github.com/jrosdahl/fancy-dabbrev
 ;;
 ;; Redistribution and use in source and binary forms, with or without
