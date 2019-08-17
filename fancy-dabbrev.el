@@ -220,15 +220,15 @@ represent major or minor modes."
 (defvar fancy-dabbrev--preview-overlay nil)
 (defvar fancy-dabbrev--preview-timer nil)
 
-(defface fancy-dabbrev--menu-face
+(defface fancy-dabbrev-menu-face
   '((t (:inherit popup-face)))
   "Face for the fancy-dabbrev menu.")
 
-(defface fancy-dabbrev--selection-face
+(defface fancy-dabbrev-selection-face
   '((t (:inherit popup-menu-selection-face)))
   "Face for the selected item in the fancy-dabbrev menu.")
 
-(defface fancy-dabbrev--preview-face
+(defface fancy-dabbrev-preview-face
   '((t (:foreground "#777" :underline t)))
   "Face for the preview.")
 
@@ -348,7 +348,7 @@ previous expansion candidate in the menu."
           (setq fancy-dabbrev--preview-overlay (make-overlay (point) (point)))
           (add-text-properties 0 1 '(cursor 1) expansion)
           (add-text-properties
-           0 (length expansion) '(face fancy-dabbrev--preview-face) expansion)
+           0 (length expansion) '(face fancy-dabbrev-preview-face) expansion)
           (overlay-put
            fancy-dabbrev--preview-overlay 'after-string expansion))))))
 
@@ -378,8 +378,8 @@ previous expansion candidate in the menu."
                         (apply 'max (mapcar 'length fancy-dabbrev--expansions))
                         fancy-dabbrev-menu-height
                         :around t
-                        :face 'fancy-dabbrev--menu-face
-                        :selection-face 'fancy-dabbrev--selection-face))
+                        :face 'fancy-dabbrev-menu-face
+                        :selection-face 'fancy-dabbrev-selection-face))
     (popup-set-list fancy-dabbrev--popup fancy-dabbrev--expansions)
     (popup-draw fancy-dabbrev--popup))
   (let ((diff))
