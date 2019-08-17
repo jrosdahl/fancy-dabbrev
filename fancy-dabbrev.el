@@ -319,7 +319,7 @@ previous expansion candidate in the menu."
              (not (fancy-dabbrev--any-bound-and-true
                    fancy-dabbrev-no-preview-for))
              (not (minibufferp (current-buffer)))
-             (memq this-command '(self-insert-command)))
+             (eq this-command #'self-insert-command))
     (setq fancy-dabbrev--preview-timer
           (run-with-idle-timer
            fancy-dabbrev-preview-delay nil 'fancy-dabbrev--preview))))
