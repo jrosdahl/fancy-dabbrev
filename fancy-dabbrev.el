@@ -300,7 +300,7 @@ previous expansion candidate in the menu."
         (setq fancy-dabbrev--expansions nil)
       (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
           (dabbrev-expand nil)
-        (add-hook 'post-command-hook 'fancy-dabbrev--post-command-hook)
+        (add-hook 'post-command-hook #'fancy-dabbrev--post-command-hook)
         (if last-command-did-expand
             (fancy-dabbrev--expand-again t)
           (fancy-dabbrev--expand-first-time)))
@@ -322,7 +322,7 @@ previous expansion candidate in the menu."
              (eq this-command #'self-insert-command))
     (setq fancy-dabbrev--preview-timer
           (run-with-idle-timer
-           fancy-dabbrev-preview-delay nil 'fancy-dabbrev--preview))))
+           fancy-dabbrev-preview-delay nil #'fancy-dabbrev--preview))))
 
 (defun fancy-dabbrev--abbrev-start-location ()
   (- dabbrev--last-abbrev-location (length fancy-dabbrev--entered-abbrev)))
@@ -374,12 +374,13 @@ previous expansion candidate in the menu."
   (fancy-dabbrev--init-expansions)
   (unless fancy-dabbrev--popup
     (setq fancy-dabbrev--popup
-          (popup-create (fancy-dabbrev--get-popup-point)
-                        (apply 'max (mapcar 'length fancy-dabbrev--expansions))
-                        fancy-dabbrev-menu-height
-                        :around t
-                        :face 'fancy-dabbrev-menu-face
-                        :selection-face 'fancy-dabbrev-selection-face))
+          (popup-create
+           (fancy-dabbrev--get-popup-point)
+           (apply #'max (mapcar #'length fancy-dabbrev--expansions))
+           fancy-dabbrev-menu-height
+           :around t
+           :face 'fancy-dabbrev-menu-face
+           :selection-face 'fancy-dabbrev-selection-face))
     (popup-set-list fancy-dabbrev--popup fancy-dabbrev--expansions)
     (popup-draw fancy-dabbrev--popup))
   (let ((diff))
@@ -412,9 +413,9 @@ previous expansion candidate in the menu."
             (cons (car fancy-dabbrev--expansions)
                   (if fancy-dabbrev-sort-menu
                       (sort new-expansions
-                            (if (fboundp 'string-collate-lessp)
-                                'string-collate-lessp
-                              'string<))
+                            (if (fboundp #'string-collate-lessp)
+                                #'string-collate-lessp
+                              #'string<))
                     (reverse new-expansions))))
       (setq fancy-dabbrev--selected-expansion 0))))
 
@@ -443,10 +444,10 @@ functionality is activated."
   :init-value nil
   (if fancy-dabbrev-mode
       (progn
-        (add-hook 'pre-command-hook 'fancy-dabbrev--pre-command-hook nil t)
-        (add-hook 'post-command-hook 'fancy-dabbrev--post-command-hook nil t))
-    (remove-hook 'pre-command-hook 'fancy-dabbrev--pre-command-hook t)
-    (remove-hook 'post-command-hook 'fancy-dabbrev--post-command-hook t)))
+        (add-hook 'pre-command-hook #'fancy-dabbrev--pre-command-hook nil t)
+        (add-hook 'post-command-hook #'fancy-dabbrev--post-command-hook nil t))
+    (remove-hook 'pre-command-hook #'fancy-dabbrev--pre-command-hook t)
+    (remove-hook 'post-command-hook #'fancy-dabbrev--post-command-hook t)))
 
 ;;;###autoload
 (define-globalized-minor-mode global-fancy-dabbrev-mode
