@@ -273,7 +273,7 @@ previous expansion candidate in the menu."
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
   (and (not (bolp))
-       (looking-back "[^[:space:]]")
+       (looking-back "[^[:space:]]" nil)
        (thing-at-point 'symbol)))
 
 (defun fancy-dabbrev--in-previewable-context ()
