@@ -213,6 +213,7 @@ represent major or minor modes."
     fancy-dabbrev-expand-or-indent
     fancy-dabbrev-backward))
 
+(defvar fancy-dabbrev-mode nil)
 (defvar fancy-dabbrev--popup nil)
 (defvar fancy-dabbrev--expansions nil)
 (defvar fancy-dabbrev--selected-expansion nil)
