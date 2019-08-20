@@ -214,12 +214,24 @@ represent major or minor modes."
     fancy-dabbrev-backward))
 
 (defvar fancy-dabbrev-mode nil)
-(defvar fancy-dabbrev--popup nil)
-(defvar fancy-dabbrev--expansions nil)
-(defvar fancy-dabbrev--selected-expansion nil)
-(defvar fancy-dabbrev--entered-abbrev nil)
-(defvar fancy-dabbrev--preview-overlay nil)
-(defvar fancy-dabbrev--preview-timer nil)
+
+(defvar fancy-dabbrev--popup nil
+  "The state of the popup menu.")
+
+(defvar fancy-dabbrev--expansions nil
+  "A list of candidate expansions retrieved via `dabbrev-expand'.")
+
+(defvar fancy-dabbrev--selected-expansion nil
+  "Index of selected expansion in `fancy-dabbrev--expansions'.")
+
+(defvar fancy-dabbrev--entered-abbrev nil
+  "Current prefix that we want to expand.")
+
+(defvar fancy-dabbrev--preview-overlay nil
+  "The state of the preview overlay.")
+
+(defvar fancy-dabbrev--preview-timer nil
+  "The state of the preview timer.")
 
 (defface fancy-dabbrev-menu-face
   '((t (:inherit popup-face)))
@@ -268,16 +280,19 @@ previous expansion candidate in the menu."
     (error "No previous expansion candidate")))
 
 (defmacro fancy-dabbrev--with-suppressed-message (&rest body)
+  "[internal] Run BODY with suppressed messages."
   (declare (indent 0))
   (let ((message-log-max nil))
     `(with-temp-message (or (current-message) "") ,@body)))
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
+  "[internal] Return non-nil if point is after something to expand."
   (and (not (bolp))
        (looking-back "[^[:space:]]" nil)
        (thing-at-point 'symbol)))
 
 (defun fancy-dabbrev--in-previewable-context ()
+  "[internal] Return non-nil if point is in a previewable context."
   (cond ((eq fancy-dabbrev-preview-context 'at-eol)
          (looking-at "[[:space:]]*$"))
         ((eq fancy-dabbrev-preview-context 'before-non-word)
@@ -287,12 +302,18 @@ previous expansion candidate in the menu."
         (t nil)))
 
 (defun fancy-dabbrev--is-fancy-dabbrev-command (command)
+  "[internal] Return non-nil if COMMAND is a fancy-dabbrev command."
   (memq command fancy-dabbrev--commands))
 
 (defun fancy-dabbrev--any-bound-and-true (variables)
+  "[internal] Return non-nil if any of VARIABLES is bound and non-nil."
   (cl-some (lambda (x) (and (boundp x) (symbol-value x))) variables))
 
 (defun fancy-dabbrev--expand ()
+  "[internal] Perform expansion.
+
+The function returns non-nil if an expansion was made, otherwise
+nil."
   (let ((last-command-did-expand
          (and (fancy-dabbrev--is-fancy-dabbrev-command last-command)
               fancy-dabbrev--expansions)))
@@ -308,10 +329,12 @@ previous expansion candidate in the menu."
       t)))
 
 (defun fancy-dabbrev--pre-command-hook ()
+  "[internal] Function run from `pre-command-hook'."
   (when fancy-dabbrev--preview-overlay
     (delete-overlay fancy-dabbrev--preview-overlay)))
 
 (defun fancy-dabbrev--post-command-hook ()
+  "[internal] Function run from `post-command-hook'."
   (when (timerp fancy-dabbrev--preview-timer)
     (cancel-timer fancy-dabbrev--preview-timer))
   (unless (fancy-dabbrev--is-fancy-dabbrev-command this-command)
@@ -326,20 +349,27 @@ previous expansion candidate in the menu."
            fancy-dabbrev-preview-delay nil #'fancy-dabbrev--preview))))
 
 (defun fancy-dabbrev--abbrev-start-location ()
+  "[internal] Determine the start location of the abbreviation."
   (- dabbrev--last-abbrev-location (length fancy-dabbrev--entered-abbrev)))
 
 (defun fancy-dabbrev--insert-expansion (expansion)
+  "[internal] Insert EXPANSION at point."
   (delete-region (fancy-dabbrev--abbrev-start-location) (point))
   (insert expansion))
 
 (defun fancy-dabbrev--get-first-expansion ()
+  "[internal] Return the first expansion candidate."
   (fancy-dabbrev--with-suppressed-message
     (dabbrev--reset-global-variables)
     (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
+    ;; Messages from dabbrev--find-expansion ("Scanning for dabbrevs...done")
+    ;; are suppressed since they are annoying when searching for a candidate
+    ;; for the preview.
     (dabbrev--find-expansion
      fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search)))
 
 (defun fancy-dabbrev--preview ()
+  "[internal] Show the preview."
   (when (and (fancy-dabbrev--looking-back-at-expandable)
              (fancy-dabbrev--in-previewable-context))
     (let ((expansion (fancy-dabbrev--get-first-expansion)))
@@ -354,6 +384,9 @@ previous expansion candidate in the menu."
            fancy-dabbrev--preview-overlay 'after-string expansion))))))
 
 (defun fancy-dabbrev--expand-first-time ()
+  "[internal] Insert expansion the first time.
+
+This function fetches the first expansion and inserts it at point."
   (setq fancy-dabbrev--expansions nil)
   (let* ((expansion (fancy-dabbrev--get-first-expansion)))
     (if (null expansion)
@@ -362,6 +395,11 @@ previous expansion candidate in the menu."
       (fancy-dabbrev--insert-expansion expansion))))
 
 (defun fancy-dabbrev--get-popup-point ()
+  "[internal] Determine where to place the menu.
+
+The menu is normally placed directly under point, but if point is
+near the right window edge or on a wrapped line, the menu is
+placed first at the next line to avoid a misrendered menu."
   (let ((start (fancy-dabbrev--abbrev-start-location))
         (line-width (- (line-end-position) (line-beginning-position))))
     (if (> line-width (window-width))
@@ -372,6 +410,12 @@ previous expansion candidate in the menu."
       start)))
 
 (defun fancy-dabbrev--expand-again (next)
+  "[internal] Expand again, i.e. not the first time.
+
+This function first creates and displays the menu if not already
+created and then steps forward if NEXT is non-nil, otherwise
+backward. The chosen expansion candidate is also inserted at
+point."
   (fancy-dabbrev--init-expansions)
   (unless fancy-dabbrev--popup
     (setq fancy-dabbrev--popup
@@ -398,7 +442,11 @@ previous expansion candidate in the menu."
    (nth fancy-dabbrev--selected-expansion fancy-dabbrev--expansions)))
 
 (defun fancy-dabbrev--init-expansions ()
+  "[internal] Initialize the list of candidate expansions."
   (when (= (length fancy-dabbrev--expansions) 1)
+    ;; If the length of fancy-dabbrev--expansions is one we have only retrieved
+    ;; the first candidate, either via preview or via the first expansion, so
+    ;; ask dabbrev for the full list of candidates.
     (let ((i 1)
           expansion
           new-expansions)
@@ -421,6 +469,10 @@ previous expansion candidate in the menu."
       (setq fancy-dabbrev--selected-expansion 0))))
 
 (defun fancy-dabbrev--on-exit ()
+  "[internal] Function run when executing another command.
+
+That is, if `this-command' is not one of
+`fancy-dabbrev--commands'."
   (when fancy-dabbrev--popup
     (popup-delete fancy-dabbrev--popup)
     (setq fancy-dabbrev--popup nil)
@@ -428,6 +480,7 @@ previous expansion candidate in the menu."
     (setq fancy-dabbrev--selected-expansion nil)))
 
 (defadvice keyboard-quit (before fancy-dabbrev--expand activate)
+  "[internal] Revert expansion if the user quits with `keyboard-quit'."
   (when (fancy-dabbrev--is-fancy-dabbrev-command last-command)
     (fancy-dabbrev--insert-expansion fancy-dabbrev--entered-abbrev)))
 
