@@ -243,7 +243,7 @@ represent major or minor modes."
   "Face for the selected item in the fancy-dabbrev menu.")
 
 (defface fancy-dabbrev-preview-face
-  '((t (:foreground "#777" :underline t)))
+  '((t (:inherit shadow :underline t)))
   "Face for the preview.")
 
 ;;;###autoload
