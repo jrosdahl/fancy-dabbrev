@@ -96,10 +96,11 @@
 ;;
 ;;   How many expansion candidates to show in the menu.
 ;;
-;; * fancy-dabbrev-preview-delay (default: 0.2)
+;; * fancy-dabbrev-preview-delay (default: 0.0)
 ;;
 ;;   How long (in seconds) to wait until displaying the preview after a
-;;   keystroke.
+;;   keystroke. Set this to e.g. 0.2 if you think that it's annoying to get a
+;;   preview immediately after writing some text.
 ;;
 ;; * fancy-dabbrev-preview-context (default: 'at-eol)
 ;;
@@ -164,7 +165,7 @@ be sorted."
   :type 'boolean
   :group 'fancy-dabbrev)
 
-(defcustom fancy-dabbrev-preview-delay 0.2
+(defcustom fancy-dabbrev-preview-delay 0.0
   "How long to wait until displaying the preview after a keystroke.
 
 The value is in seconds."
