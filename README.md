@@ -1,6 +1,8 @@
 fancy-dabbrev
 =============
 
+[![MELPA](https://melpa.org/packages/fancy-dabbrev-badge.svg)](https://melpa.org/#/fancy-dabbrev)
+
 fancy-dabbrev essentially wraps the Emacs built-in [dabbrev] functionality,
 with two improvements:
 
