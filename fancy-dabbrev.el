@@ -1,9 +1,9 @@
 ;;; fancy-dabbrev.el --- Like dabbrev-expand with preview and popup menu -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2018-2019 Joel Rosdahl
+;; Copyright (C) 2018-2020 Joel Rosdahl
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
-;; Version: 1.0
+;; Version: 1.1
 ;; License: BSD-3-clause
 ;; Package-Requires: ((emacs "24") (popup "0.5.3"))
 ;; URL: https://github.com/jrosdahl/fancy-dabbrev
@@ -102,6 +102,12 @@
 ;;   keystroke. Set this to e.g. 0.2 if you think that it's annoying to get a
 ;;   preview immediately after writing some text.
 ;;
+;; * fancy-dabbrev-expansion-context (default: after-symbol)
+;;
+;;   Where to try to perform expansion. If 'after-symbol, only try to expand
+;;   after symbols (as determined by `thing-at-point'). If 'after-non-space, try
+;;   to expand after any non-space character.
+;;
 ;; * fancy-dabbrev-preview-context (default: 'at-eol)
 ;;
 ;;   When to show the preview. If 'at-eol, only show the preview if no other
@@ -170,6 +176,17 @@ be sorted."
 
 The value is in seconds."
   :type 'float
+  :group 'fancy-dabbrev)
+
+(defcustom fancy-dabbrev-expansion-context
+   'after-symbol
+  "Where to try to perform expansion.
+
+If 'after-symbol, only try to expand after symbols (as determined
+by `thing-at-point'). If 'after-non-space, enable expansion after
+any non-space character."
+  :type '(choice (const :tag "Only after symbols" after-symbol)
+                 (const :tag "After any non-space character" after-non-space))
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-preview-context
@@ -290,7 +307,8 @@ previous expansion candidate in the menu."
   "[internal] Return non-nil if point is after something to expand."
   (and (not (bolp))
        (looking-back "[^[:space:]]" nil)
-       (thing-at-point 'symbol)))
+       (or (not (eq fancy-dabbrev-expansion-context 'after-symbol))
+           (thing-at-point 'symbol))))
 
 (defun fancy-dabbrev--in-previewable-context ()
   "[internal] Return non-nil if point is in a previewable context."

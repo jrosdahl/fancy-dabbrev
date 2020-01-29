@@ -110,6 +110,12 @@ Here are `fancy-dabbrev`'s own configuration options:
   Set this to e.g. `0.2` if you think that it's annoying to get a preview
   immediately after writing some text.
 
+* `fancy-dabbrev-expansion-context` (default: `after-symbol`)
+
+  Where to try to perform expansion. If `'after-symbol`, only try to expand
+  after symbols (as determined by `thing-at-point`). If `'after-non-space`, try
+  to expand after any non-space character.
+
 * `fancy-dabbrev-preview-context` (default: `'at-eol`)
 
   When to show the preview. If `'at-eol`, only show the preview if no other
