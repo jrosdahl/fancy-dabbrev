@@ -520,7 +520,15 @@ functionality is activated."
         (add-hook 'pre-command-hook #'fancy-dabbrev--pre-command-hook nil t)
         (add-hook 'post-command-hook #'fancy-dabbrev--post-command-hook nil t))
     (remove-hook 'pre-command-hook #'fancy-dabbrev--pre-command-hook t)
-    (remove-hook 'post-command-hook #'fancy-dabbrev--post-command-hook t)))
+    (remove-hook 'post-command-hook #'fancy-dabbrev--post-command-hook t)
+
+    ;; Clean-up run-time state.
+    (when fancy-dabbrev--preview-overlay
+      (delete-overlay fancy-dabbrev--preview-overlay)
+      (setq fancy-dabbrev--preview-overlay nil))
+    (when (timerp fancy-dabbrev--preview-timer)
+      (cancel-timer fancy-dabbrev--preview-timer)
+      (setq fancy-dabbrev--preview-timer nil))))
 
 ;;;###autoload
 (define-globalized-minor-mode global-fancy-dabbrev-mode
