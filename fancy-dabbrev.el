@@ -5,7 +5,7 @@
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
 ;; Version: 1.1
 ;; License: BSD-3-clause
-;; Package-Requires: ((emacs "24") (popup "0.5.3"))
+;; Package-Requires: ((emacs "25.1") (popup "0.5.3"))
 ;; URL: https://github.com/jrosdahl/fancy-dabbrev
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -151,7 +151,7 @@
 (require 'popup)
 
 (defgroup fancy-dabbrev nil
-  "Fancy dabbrev"
+  "Fancy dabbrev."
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-menu-height 10
@@ -505,13 +505,13 @@ That is, if `this-command' is not one of
 
 ;;;###autoload
 (define-minor-mode fancy-dabbrev-mode
-  "Toggle fancy-dabbrev-mode.
+  "Toggle `fancy-dabbrev-mode'.
 
-With a prefix argument ARG, enable fancy-dabbrev-mode if ARG is
+With a prefix argument ARG, enable `fancy-dabbrev-mode' if ARG is
 positive, and disable it otherwise. If called from Lisp, enable
 the mode if ARG is omitted or nil.
 
-When fancy-dabbrev-mode is enabled, fancy-dabbrev's preview
+When `fancy-dabbrev-mode' is enabled, fancy-dabbrev's preview
 functionality is activated."
   :lighter " FD"
   :init-value nil
