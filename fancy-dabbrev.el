@@ -390,7 +390,8 @@ nil."
 (defun fancy-dabbrev--post-command-hook ()
   "[internal] Function run from `post-command-hook'."
   (when (timerp fancy-dabbrev--preview-timer)
-    (cancel-timer fancy-dabbrev--preview-timer))
+    (cancel-timer fancy-dabbrev--preview-timer)
+    (setq fancy-dabbrev--preview-timer nil))
   (unless (fancy-dabbrev--is-fancy-dabbrev-command this-command)
     (fancy-dabbrev--on-exit))
   (when (and fancy-dabbrev-mode
