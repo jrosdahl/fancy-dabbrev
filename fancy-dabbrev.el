@@ -350,7 +350,8 @@ nil."
 (defun fancy-dabbrev--pre-command-hook ()
   "[internal] Function run from `pre-command-hook'."
   (when fancy-dabbrev--preview-overlay
-    (delete-overlay fancy-dabbrev--preview-overlay)))
+    (delete-overlay fancy-dabbrev--preview-overlay)
+    (setq fancy-dabbrev--preview-overlay nil)))
 
 (defun fancy-dabbrev--post-command-hook ()
   "[internal] Function run from `post-command-hook'."
