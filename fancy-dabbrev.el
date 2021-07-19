@@ -373,11 +373,10 @@ nil."
   (let ((last-command-did-expand
          (and (fancy-dabbrev--is-fancy-dabbrev-command last-command)
               fancy-dabbrev--expansions)))
-    (if (or (not (or last-command-did-expand
-                     (fancy-dabbrev--looking-back-at-expandable)))
-            (not (and fancy-dabbrev-expansion-on-preview-only
-                      (or last-command-did-expand
-                          fancy-dabbrev--preview-overlay-was-visible))))
+    (if (and (not last-command-did-expand)
+             (or (not (fancy-dabbrev--looking-back-at-expandable))
+                 (and fancy-dabbrev-expansion-on-preview-only
+                      (not fancy-dabbrev--preview-overlay-was-visible))))
         (setq fancy-dabbrev--expansions nil)
       (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
           (dabbrev-expand nil)
