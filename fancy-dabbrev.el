@@ -566,7 +566,7 @@ functionality is activated."
     (remove-hook 'pre-command-hook #'fancy-dabbrev--pre-command-hook t)
     (remove-hook 'post-command-hook #'fancy-dabbrev--post-command-hook t)
 
-    ;; Clean-up run-time state.
+    ;; Clean up runtime state.
     (when fancy-dabbrev--preview-overlay
       (delete-overlay fancy-dabbrev--preview-overlay)
       (setq fancy-dabbrev--preview-overlay nil))
