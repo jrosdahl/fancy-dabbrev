@@ -108,6 +108,10 @@
 ;;   after symbols (as determined by `thing-at-point'). If 'after-non-space, try
 ;;   to expand after any non-space character.
 ;;
+;; * fancy-dabbrev-indent-command (default: 'indent-for-tab-command)
+;;
+;;   The indentation command used for fancy-dabbrev-expand-or-indent.
+;;
 ;; * fancy-dabbrev-preview-context (default: 'at-eol)
 ;;
 ;;   When to show the preview. If 'at-eol, only show the preview if no other
@@ -115,6 +119,13 @@
 ;;   'before-non-word, show the preview whenever the cursor is not immediately
 ;;   before (or inside) a word. If 'everywhere, always show the preview after
 ;;   typing.
+;;
+;; * fancy-dabbrev-expansion-on-preview-only (default: nil)
+;;
+;;   Only expand when a preview is shown or expansion ran for the last command.
+;;   This has the advantage that fancy-dabbrev-expand-or-indent
+;;   always falls back to calling fancy-dabbrev-indent-command
+;;   when there is nothing to expand.
 ;;
 ;; * fancy-dabbrev-no-expansion-for (default: '(multiple-cursors-mode))
 ;;
@@ -189,6 +200,12 @@ any non-space character."
                  (const :tag "After any non-space character" after-non-space))
   :group 'fancy-dabbrev)
 
+(defcustom fancy-dabbrev-indent-command
+   'indent-for-tab-command
+  "The indent command to use for `fancy-dabbrev-expand-or-indent'."
+  :type 'symbol
+  :group 'fancy-dabbrev)
+
 (defcustom fancy-dabbrev-preview-context
   'at-eol
   "When to show the preview.
@@ -202,6 +219,15 @@ preview after typing."
                  (const :tag "When cursor is not immediately before a word"
                         before-non-word)
                  (const :tag "Everywhere" everywhere))
+  :group 'fancy-dabbrev)
+
+(defcustom fancy-dabbrev-expansion-on-preview-only nil
+  "Only expand when a preview is shown or expansion ran for the last command.
+
+This has the advantage that `fancy-dabbrev-expand-or-indent'
+always falls back to calling `fancy-dabbrev-indent-command'
+when there is nothing to expand."
+  :type 'boolean
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-no-expansion-for
@@ -248,6 +274,9 @@ represent major or minor modes."
 (defvar fancy-dabbrev--preview-overlay nil
   "The state of the preview overlay.")
 
+(defvar fancy-dabbrev--preview-overlay-was-visible nil
+  "The preview overlay visibility before running a command.")
+
 (defvar fancy-dabbrev--preview-timer nil
   "The state of the preview timer.")
 
@@ -282,7 +311,7 @@ This function executes `fancy-dabbrev-expand' if the cursor is
 after an expandable prefix, otherwise `indent-for-tab-command'."
   (interactive)
   (unless (fancy-dabbrev--expand)
-    (indent-for-tab-command)))
+    (call-interactively fancy-dabbrev-indent-command)))
 
 ;;;###autoload
 (defun fancy-dabbrev-backward ()
@@ -336,8 +365,11 @@ nil."
   (let ((last-command-did-expand
          (and (fancy-dabbrev--is-fancy-dabbrev-command last-command)
               fancy-dabbrev--expansions)))
-    (if (not (or last-command-did-expand
-                 (fancy-dabbrev--looking-back-at-expandable)))
+    (if (or (not (or last-command-did-expand
+                     (fancy-dabbrev--looking-back-at-expandable)))
+            (not (and fancy-dabbrev-expansion-on-preview-only
+                      (or last-command-did-expand
+                          fancy-dabbrev--preview-overlay-was-visible))))
         (setq fancy-dabbrev--expansions nil)
       (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
           (dabbrev-expand nil)
@@ -349,7 +381,9 @@ nil."
 
 (defun fancy-dabbrev--pre-command-hook ()
   "[internal] Function run from `pre-command-hook'."
+  (setq fancy-dabbrev--preview-overlay-was-visible nil)
   (when fancy-dabbrev--preview-overlay
+    (setq fancy-dabbrev--preview-overlay-was-visible t)
     (delete-overlay fancy-dabbrev--preview-overlay)
     (setq fancy-dabbrev--preview-overlay nil)))
 
