@@ -334,11 +334,40 @@ previous expansion candidate in the menu."
     (setq fancy-dabbrev--expansions nil)
     (error "No previous expansion candidate")))
 
+(defmacro fancy-dabbrev--with-advice (fn-orig where fn-advice &rest body)
+  "Execute BODY with advice added WHERE using FN-ADVICE temporarily added to FN-ORIG."
+  `(let ((fn-advice-var ,fn-advice))
+     (unwind-protect
+         (progn
+           (advice-add ,fn-orig ,where fn-advice-var)
+           ,@body)
+       (advice-remove ,fn-orig fn-advice-var))))
+
 (defmacro fancy-dabbrev--with-suppressed-message (&rest body)
-  "[internal] Run BODY with suppressed messages."
-  (declare (indent 0))
-  (let ((message-log-max nil))
-    `(with-temp-message (or (current-message) "") ,@body)))
+  "[internal] Run BODY with the message function disabled entirely."
+  `(fancy-dabbrev--with-advice
+    'message :override '(lambda (&rest args) nil) ,@body))
+
+(defmacro fancy-dabbrev--with-suppressed-message-advice (function-sym &rest body)
+  "[internal] Advise FUNCTION-SYM to run BODY with `message' disabled."
+  `(fancy-dabbrev--with-advice
+    ,function-sym
+    :around '(lambda (fn-orig &rest args)
+               (fancy-dabbrev--with-suppressed-message (apply fn-orig args)))
+    ,@body))
+
+;; Messages from dabbrev--find-expansion ("Scanning for dabbrevs...done")
+;; are suppressed since they are annoying when searching for a candidate
+;; for the preview.
+(defmacro fancy-dabbrev--without-progress-reporter (&rest body)
+  "[internal] Run BODY with the progress reporter with `message' disabled."
+  `(fancy-dabbrev--with-suppressed-message-advice
+    'make-progress-reporter
+    (fancy-dabbrev--with-suppressed-message-advice
+     'progress-reporter-update
+     (fancy-dabbrev--with-suppressed-message-advice
+      'progress-reporter-done
+      ,@body))))
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
   "[internal] Return non-nil if point is after something to expand."
@@ -379,7 +408,8 @@ nil."
                       (not fancy-dabbrev--preview-overlay-was-visible))))
         (setq fancy-dabbrev--expansions nil)
       (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
-          (dabbrev-expand nil)
+          (fancy-dabbrev--without-progress-reporter
+           (dabbrev-expand nil))
         (add-hook 'post-command-hook #'fancy-dabbrev--post-command-hook)
         (if last-command-did-expand
             (fancy-dabbrev--expand-again t)
@@ -421,14 +451,14 @@ nil."
 
 (defun fancy-dabbrev--get-first-expansion ()
   "[internal] Return the first expansion candidate."
-  (fancy-dabbrev--with-suppressed-message
-    (dabbrev--reset-global-variables)
-    (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
-    ;; Messages from dabbrev--find-expansion ("Scanning for dabbrevs...done")
-    ;; are suppressed since they are annoying when searching for a candidate
-    ;; for the preview.
-    (dabbrev--find-expansion
-     fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search)))
+  (dabbrev--reset-global-variables)
+  (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
+  ;; Messages from dabbrev--find-expansion ("Scanning for dabbrevs...done")
+  ;; are suppressed since they are annoying when searching for a candidate
+  ;; for the preview.
+  (fancy-dabbrev--without-progress-reporter
+   (dabbrev--find-expansion
+    fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search)))
 
 (defun fancy-dabbrev--preview ()
   "[internal] Show the preview."
@@ -514,10 +544,11 @@ point."
           new-expansions)
       (while (and (< i fancy-dabbrev-menu-height)
                   (setq expansion
-                        (dabbrev--find-expansion
-                         fancy-dabbrev--entered-abbrev
-                         0
-                         dabbrev-case-fold-search)))
+                        (fancy-dabbrev--without-progress-reporter
+                         (dabbrev--find-expansion
+                          fancy-dabbrev--entered-abbrev
+                          0
+                          dabbrev-case-fold-search))))
         (setq new-expansions (cons expansion new-expansions))
         (setq i (1+ i)))
       (setq fancy-dabbrev--expansions
