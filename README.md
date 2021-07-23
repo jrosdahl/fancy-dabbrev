@@ -64,13 +64,13 @@ path and put something like this in your Emacs configuration file:
 
 ;; Bind fancy-dabbrev-expand and fancy-dabbrev-backward to your keys of
 ;; choice, here "TAB" and "Shift+TAB":
-(global-set-key (kbd "<tab>") 'fancy-dabbrev-expand)
+(global-set-key (kbd "TAB") 'fancy-dabbrev-expand)
 (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 
 ;; If you want TAB to indent the line like it usually does when the cursor
 ;; is not next to an expandable word, use 'fancy-dabbrev-expand-or-indent
 ;; instead of `fancy-dabbrev-expand`:
-(global-set-key (kbd "<tab>") 'fancy-dabbrev-expand-or-indent)
+(global-set-key (kbd "TAB") 'fancy-dabbrev-expand-or-indent)
 (global-set-key (kbd "<backtab>") 'fancy-dabbrev-backward)
 ```
 
