@@ -141,7 +141,8 @@ Here are `fancy-dabbrev`'s own configuration options:
   Set this to e.g. `0.2` if you think that it's annoying to get a preview
   immediately after writing some text.
 
-* `fancy-dabbrev-self-insert-commands` (default `'(self-insert-command)`)
+* `fancy-dabbrev-self-insert-commands` (default `'(self-insert-command
+  org-self-insert-command)`)
 
   A list of commands after which to show a preview.
 
