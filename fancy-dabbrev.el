@@ -141,6 +141,10 @@
 ;;   keystroke. Set this to e.g. 0.2 if you think that it's annoying to get a
 ;;   preview immediately after writing some text.
 ;;
+;; * fancy-dabbrev-self-insert-commands (default (self-insert-command))
+;;
+;;   A list of commands after which to show a preview.
+;;
 ;; * fancy-dabbrev-sort-menu (default nil)
 ;;
 ;;   If nil, the popup menu will show matching candidates in the order that
@@ -258,6 +262,12 @@ This is a list of variables which, if bound and non-nil, will
 inactivate fancy-dabbrev preview. The variables typically
 represent major or minor modes."
   :type '(repeat variable)
+  :group 'fancy-dabbrev)
+
+(defcustom fancy-dabbrev-self-insert-commands
+  '(self-insert-command)
+  "A list of commands after which to show a preview."
+  :type '(repeat function)
   :group 'fancy-dabbrev)
 
 (defconst fancy-dabbrev--commands
@@ -390,6 +400,10 @@ previous expansion candidate in the menu."
   "[internal] Return non-nil if COMMAND is a fancy-dabbrev command."
   (memq command fancy-dabbrev--commands))
 
+(defun fancy-dabbrev--is-self-insert-command ()
+  "[internal] Return non-nil if COMMAND is a \"self-insert command\"."
+  (memq this-command fancy-dabbrev-self-insert-commands))
+
 (defun fancy-dabbrev--any-bound-and-true (variables)
   "[internal] Return non-nil if any of VARIABLES is bound and non-nil."
   (cl-some (lambda (x) (and (boundp x) (symbol-value x))) variables))
@@ -435,7 +449,7 @@ nil."
              (not (fancy-dabbrev--any-bound-and-true
                    fancy-dabbrev-no-preview-for))
              (not (minibufferp (current-buffer)))
-             (eq this-command #'self-insert-command))
+             (fancy-dabbrev--is-self-insert-command))
     (setq fancy-dabbrev--preview-timer
           (run-with-idle-timer
            fancy-dabbrev-preview-delay nil #'fancy-dabbrev--preview))))
