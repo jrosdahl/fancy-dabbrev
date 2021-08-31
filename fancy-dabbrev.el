@@ -480,16 +480,25 @@ nil."
   (delete-region (fancy-dabbrev--abbrev-start-location) (point))
   (insert expansion))
 
-(defun fancy-dabbrev--get-first-expansion ()
-  "[internal] Return the first expansion candidate."
-  (dabbrev--reset-global-variables)
-  (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
+(defun fancy-dabbrev--get-expansion ()
+  "[internal] Get expansion from dabbrev-expand."
   ;; Messages from dabbrev--find-expansion ("Scanning for dabbrevs...done")
   ;; are suppressed since they are annoying when searching for a candidate
   ;; for the preview.
   (fancy-dabbrev--without-progress-reporter
-   (dabbrev--find-expansion
-    fancy-dabbrev--entered-abbrev 0 dabbrev-case-fold-search)))
+   (let* ((abbrev fancy-dabbrev--entered-abbrev)
+          (expansion
+           (dabbrev--find-expansion abbrev 0 dabbrev-case-fold-search)))
+     (with-temp-buffer
+       (insert abbrev)
+       (dabbrev--substitute-expansion abbrev abbrev expansion nil)
+       (buffer-string)))))
+
+(defun fancy-dabbrev--get-first-expansion ()
+  "[internal] Return the first expansion candidate."
+  (dabbrev--reset-global-variables)
+  (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
+  (fancy-dabbrev--get-expansion))
 
 (defun fancy-dabbrev--preview ()
   "[internal] Show the preview."
@@ -574,12 +583,7 @@ point."
           expansion
           new-expansions)
       (while (and (< i fancy-dabbrev-menu-height)
-                  (setq expansion
-                        (fancy-dabbrev--without-progress-reporter
-                         (dabbrev--find-expansion
-                          fancy-dabbrev--entered-abbrev
-                          0
-                          dabbrev-case-fold-search))))
+                  (setq expansion (fancy-dabbrev--get-expansion)))
         (setq new-expansions (cons expansion new-expansions))
         (setq i (1+ i)))
       (setq fancy-dabbrev--expansions
