@@ -95,8 +95,11 @@
 ;; * fancy-dabbrev-expansion-context (default: 'after-symbol)
 ;;
 ;;   Where to try to perform expansion. If 'after-symbol, only try to expand
-;;   after symbols (as determined by `thing-at-point'). If 'after-non-space, try
-;;   to expand after any non-space character.
+;;   after a symbol (as determined by thing-at-point). If
+;;   'after-symbol-or-space, also make it possible to expand after a space  (the
+;;   first expansion candidate will then be based on the previous symbol). If
+;;   'after-non-space, enable expansion after any non-space character. If
+;;   'almost-everywhere, enable exansion everywhere except at empty lines.
 ;;
 ;; * fancy-dabbrev-expansion-on-preview-only (default: nil)
 ;;
@@ -206,11 +209,17 @@ The value is in seconds."
    'after-symbol
   "Where to try to perform expansion.
 
-If 'after-symbol, only try to expand after symbols (as determined
-by `thing-at-point'). If 'after-non-space, enable expansion after
-any non-space character."
-  :type '(choice (const :tag "Only after symbols" after-symbol)
-                 (const :tag "After any non-space character" after-non-space))
+If 'after-symbol, only try to expand after a symbol (as determined
+by `thing-at-point'). If 'after-symbol-or-space, also make it
+possible to expand after a space (the first expansion candidate
+will then be based on the previous symbol). If 'after-non-space,
+enable expansion after any non-space character. If
+'almost-everywhere, enable exansion everywhere except at empty lines."
+  :type '(choice
+          (const :tag "Only after a symbol" after-symbol)
+          (const :tag "Only after a symbol or space" after-symbol-or-space)
+          (const :tag "After any non-space character" after-non-space)
+          (const :tag "Almost everywhere" almost-everywhere))
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-indent-command
@@ -382,10 +391,17 @@ previous expansion candidate in the menu."
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
   "[internal] Return non-nil if point is after something to expand."
-  (and (not (bolp))
-       (looking-back "[^[:space:]]" nil)
-       (or (not (eq fancy-dabbrev-expansion-context 'after-symbol))
-           (thing-at-point 'symbol))))
+  (cond ((eq fancy-dabbrev-expansion-context 'after-symbol)
+         (thing-at-point 'symbol))
+        ((eq fancy-dabbrev-expansion-context 'after-symbol-or-space)
+         (save-excursion
+           (re-search-backward
+            "[^[:space:]]" (line-beginning-position) 'noerror)
+           (thing-at-point 'symbol)))
+        ((eq fancy-dabbrev-expansion-context 'after-non-space)
+         (looking-back "[^[:space:]]" (line-beginning-position)))
+        ((eq fancy-dabbrev-expansion-context 'almost-everywhere)
+         (looking-back "[^[:space:]] *" (line-beginning-position)))))
 
 (defun fancy-dabbrev--in-previewable-context ()
   "[internal] Return non-nil if point is in a previewable context."
