@@ -489,10 +489,11 @@ nil."
    (let* ((abbrev fancy-dabbrev--entered-abbrev)
           (expansion
            (dabbrev--find-expansion abbrev 0 dabbrev-case-fold-search)))
-     (with-temp-buffer
-       (insert abbrev)
-       (dabbrev--substitute-expansion abbrev abbrev expansion nil)
-       (buffer-string)))))
+     (and expansion
+          (with-temp-buffer
+            (insert abbrev)
+            (dabbrev--substitute-expansion abbrev abbrev expansion nil)
+            (buffer-string))))))
 
 (defun fancy-dabbrev--get-first-expansion ()
   "[internal] Return the first expansion candidate."
