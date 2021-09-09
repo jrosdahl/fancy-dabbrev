@@ -394,10 +394,11 @@ previous expansion candidate in the menu."
   (cond ((eq fancy-dabbrev-expansion-context 'after-symbol)
          (thing-at-point 'symbol))
         ((eq fancy-dabbrev-expansion-context 'after-symbol-or-space)
-         (save-excursion
-           (re-search-backward
-            "[^[:space:]]" (line-beginning-position) 'noerror)
-           (thing-at-point 'symbol)))
+         (and (not (eq (point) (line-beginning-position)))
+              (save-excursion
+                (re-search-backward
+                 "[^[:space:]]" (line-beginning-position) 'noerror)
+                (thing-at-point 'symbol))))
         ((eq fancy-dabbrev-expansion-context 'after-non-space)
          (looking-back "[^[:space:]]" (line-beginning-position)))
         ((eq fancy-dabbrev-expansion-context 'almost-everywhere)
