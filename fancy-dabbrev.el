@@ -437,6 +437,8 @@ nil."
     (if (and (not last-command-did-expand)
              (or (not (fancy-dabbrev--looking-back-at-expandable))
                  (and fancy-dabbrev-expansion-on-preview-only
+                      ;; Only require the preview when executed interactively.
+                      (not (or executing-kbd-macro noninteractive))
                       (not fancy-dabbrev--preview-overlay-was-visible))))
         (setq fancy-dabbrev--expansions nil)
       (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
