@@ -105,8 +105,8 @@ Here are `fancy-dabbrev`'s own configuration options:
 * `fancy-dabbrev-expansion-on-preview-only` (default: `nil`)
 
   Only expand when a preview is shown or expansion ran for the last command.
-  This has the advantage that fancy-dabbrev-expand-or-indent always falls back
-  to calling fancy-dabbrev-indent-command when there is nothing to expand.
+  This has the advantage that `fancy-dabbrev-expand-or-indent` always falls back
+  to calling `fancy-dabbrev-indent-command` when there is nothing to expand.
 
 * `fancy-dabbrev-indent-command` (default: `'indent-for-tab-command`)
 
