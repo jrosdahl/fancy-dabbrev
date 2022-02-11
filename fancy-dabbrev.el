@@ -1,6 +1,6 @@
 ;;; fancy-dabbrev.el --- Like dabbrev-expand with preview and popup menu -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2018-2021 Joel Rosdahl
+;; Copyright (C) 2018-2022 Joel Rosdahl
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
 ;; Version: 1.1
@@ -206,7 +206,7 @@ The value is in seconds."
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-expansion-context
-   'after-symbol
+  'after-symbol
   "Where to try to perform expansion.
 
 If 'after-symbol, only try to expand after a symbol (as determined
@@ -223,7 +223,7 @@ enable expansion after any non-space character. If
   :group 'fancy-dabbrev)
 
 (defcustom fancy-dabbrev-indent-command
-   'indent-for-tab-command
+  'indent-for-tab-command
   "The indent command to use for `fancy-dabbrev-expand-or-indent'."
   :type 'symbol
   :group 'fancy-dabbrev)
