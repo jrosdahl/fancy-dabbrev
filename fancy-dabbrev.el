@@ -328,7 +328,7 @@ This function executes `dabbrev-expand' when called the first
 time. Seqsequent calls will execute `dabbrev-expand' while
 showing a popup menu with the expansion candidates."
   (interactive)
-  (unless (fancy-dabbrev--expand)
+  (unless (fancy-dabbrev--expand t)
     (error "No expansion possible here")))
 
 ;;;###autoload
@@ -338,7 +338,7 @@ showing a popup menu with the expansion candidates."
 This function executes `fancy-dabbrev-expand' if the cursor is
 after an expandable prefix, otherwise `indent-for-tab-command'."
   (interactive)
-  (unless (fancy-dabbrev--expand)
+  (unless (fancy-dabbrev--expand nil)
     (call-interactively fancy-dabbrev-indent-command)))
 
 ;;;###autoload
@@ -426,7 +426,7 @@ previous expansion candidate in the menu."
   "[internal] Return non-nil if any of VARIABLES is bound and non-nil."
   (cl-some (lambda (x) (and (boundp x) (symbol-value x))) variables))
 
-(defun fancy-dabbrev--expand ()
+(defun fancy-dabbrev--expand (fail-on-no-expansion)
   "[internal] Perform expansion.
 
 The function returns non-nil if an expansion was made, otherwise
@@ -441,12 +441,14 @@ nil."
         (setq fancy-dabbrev--expansions nil)
       (if (fancy-dabbrev--any-bound-and-true fancy-dabbrev-no-expansion-for)
           (fancy-dabbrev--without-progress-reporter
-           (dabbrev-expand nil))
+           (dabbrev-expand nil)
+           t)
         (add-hook 'post-command-hook #'fancy-dabbrev--post-command-hook)
         (if last-command-did-expand
-            (fancy-dabbrev--expand-again t)
-          (fancy-dabbrev--expand-first-time)))
-      t)))
+            (progn
+              (fancy-dabbrev--expand-again t)
+              t)
+          (fancy-dabbrev--expand-first-time fail-on-no-expansion))))))
 
 (defun fancy-dabbrev--pre-command-hook ()
   "[internal] Function run from `pre-command-hook'."
@@ -517,16 +519,18 @@ nil."
           (overlay-put
            fancy-dabbrev--preview-overlay 'after-string expansion))))))
 
-(defun fancy-dabbrev--expand-first-time ()
+(defun fancy-dabbrev--expand-first-time (fail-on-no-expansion)
   "[internal] Insert expansion the first time.
 
 This function fetches the first expansion and inserts it at point."
   (setq fancy-dabbrev--expansions nil)
   (let* ((expansion (fancy-dabbrev--get-first-expansion)))
     (if (null expansion)
-        (error "No expansion found for \"%s\"" fancy-dabbrev--entered-abbrev)
+        (when fail-on-no-expansion
+          (error "No expansion found for \"%s\"" fancy-dabbrev--entered-abbrev))
       (setq fancy-dabbrev--expansions (list expansion))
-      (fancy-dabbrev--insert-expansion expansion))))
+      (fancy-dabbrev--insert-expansion expansion)
+      t)))
 
 (defun fancy-dabbrev--get-popup-point ()
   "[internal] Determine where to place the menu.
