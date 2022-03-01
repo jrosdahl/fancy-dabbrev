@@ -393,17 +393,16 @@ previous expansion candidate in the menu."
   "[internal] Return non-nil if point is after something to expand."
   (cl-case fancy-dabbrev-expansion-context
     (after-symbol
-     (thing-at-point 'symbol))
+     (looking-at (rx symbol-end)))
     (after-symbol-or-space
-     (and (not (eq (point) (line-beginning-position)))
-          (save-excursion
-            (re-search-backward
-             "[^[:space:]]" (line-beginning-position) 'noerror)
-            (thing-at-point 'symbol))))
+     (or (looking-at (rx (or symbol-end bol)))
+         (string-match-p (rx blank) (char-to-string (char-after (1- (point)))))))
     (after-non-space
-     (looking-back "[^[:space:]]" (line-beginning-position)))
+     (string-match-p "[^[:space:]]" (char-to-string (char-after (1- (point))))))
     (almost-everywhere
-     (looking-back "[^[:space:]] *" (line-beginning-position)))))
+     (not (string-match-p "^[[:space:]]*$" (buffer-substring-no-properties
+                                            (line-beginning-position)
+                                            (point)))))))
 
 (defun fancy-dabbrev--in-previewable-context ()
   "[internal] Return non-nil if point is in a previewable context."
