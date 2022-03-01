@@ -391,28 +391,29 @@ previous expansion candidate in the menu."
 
 (defun fancy-dabbrev--looking-back-at-expandable ()
   "[internal] Return non-nil if point is after something to expand."
-  (cond ((eq fancy-dabbrev-expansion-context 'after-symbol)
-         (thing-at-point 'symbol))
-        ((eq fancy-dabbrev-expansion-context 'after-symbol-or-space)
-         (and (not (eq (point) (line-beginning-position)))
-              (save-excursion
-                (re-search-backward
-                 "[^[:space:]]" (line-beginning-position) 'noerror)
-                (thing-at-point 'symbol))))
-        ((eq fancy-dabbrev-expansion-context 'after-non-space)
-         (looking-back "[^[:space:]]" (line-beginning-position)))
-        ((eq fancy-dabbrev-expansion-context 'almost-everywhere)
-         (looking-back "[^[:space:]] *" (line-beginning-position)))))
+  (cl-case fancy-dabbrev-expansion-context
+    (after-symbol
+     (thing-at-point 'symbol))
+    (after-symbol-or-space
+     (and (not (eq (point) (line-beginning-position)))
+          (save-excursion
+            (re-search-backward
+             "[^[:space:]]" (line-beginning-position) 'noerror)
+            (thing-at-point 'symbol))))
+    (after-non-space
+     (looking-back "[^[:space:]]" (line-beginning-position)))
+    (almost-everywhere
+     (looking-back "[^[:space:]] *" (line-beginning-position)))))
 
 (defun fancy-dabbrev--in-previewable-context ()
   "[internal] Return non-nil if point is in a previewable context."
-  (cond ((eq fancy-dabbrev-preview-context 'at-eol)
-         (looking-at "[[:space:]]*$"))
-        ((eq fancy-dabbrev-preview-context 'before-non-word)
-         (looking-at "$\\|[^[:word:]_]"))
-        ((eq fancy-dabbrev-preview-context 'everywhere)
-         t)
-        (t nil)))
+  (cl-case fancy-dabbrev-preview-context
+    (at-eol
+     (looking-at "[[:space:]]*$"))
+    (before-non-word
+     (looking-at "$\\|[^[:word:]_]"))
+    (everywhere
+     t)))
 
 (defun fancy-dabbrev--is-fancy-dabbrev-command (command)
   "[internal] Return non-nil if COMMAND is a fancy-dabbrev command."
