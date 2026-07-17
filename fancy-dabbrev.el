@@ -1,6 +1,6 @@
 ;;; fancy-dabbrev.el --- Like dabbrev-expand with preview and popup menu -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2018-2022 Joel Rosdahl
+;; Copyright (C) 2018-2026 Joel Rosdahl
 ;;
 ;; Author: Joel Rosdahl <joel@rosdahl.net>
 ;; Version: 1.1
@@ -95,11 +95,13 @@
 ;; * fancy-dabbrev-expansion-context (default: 'after-symbol)
 ;;
 ;;   Where to try to perform expansion. If 'after-symbol, only try to expand
-;;   after a symbol (as determined by thing-at-point). If
-;;   'after-symbol-or-space, also make it possible to expand after a space  (the
-;;   first expansion candidate will then be based on the previous symbol). If
-;;   'after-non-space, enable expansion after any non-space character. If
-;;   'almost-everywhere, enable exansion everywhere except at empty lines.
+;;   after or inside a symbol (as determined by thing-at-point). If
+;;   'after-symbol-followed-by-space, expand like 'after-symbol but not inside
+;;   symbols. If 'after-symbol-or-space, also make it possible to expand after a
+;;   space (the first expansion candidate will then be based on the previous
+;;   symbol). If 'after-non-space, enable expansion after any non-space
+;;   character. If 'almost-everywhere, enable exansion everywhere except at
+;;   empty lines.
 ;;
 ;; * fancy-dabbrev-expansion-on-preview-only (default: nil)
 ;;
@@ -209,14 +211,18 @@ The value is in seconds."
   'after-symbol
   "Where to try to perform expansion.
 
-If 'after-symbol, only try to expand after a symbol (as determined
-by `thing-at-point'). If 'after-symbol-or-space, also make it
+If 'after-symbol, only try to expand after a symbol (as
+determined by `thing-at-point'). If
+`'after-symbol-followed-by-space`, expand like `'after-symbol`
+but not inside symbols. If 'after-symbol-or-space, also make it
 possible to expand after a space (the first expansion candidate
 will then be based on the previous symbol). If 'after-non-space,
 enable expansion after any non-space character. If
-'almost-everywhere, enable exansion everywhere except at empty lines."
+'almost-everywhere, enable exansion everywhere except at empty
+lines."
   :type '(choice
           (const :tag "Only after a symbol" after-symbol)
+          (const :tag "Only after a symbol but not inside symbols" after-symbol-followed-by-space)
           (const :tag "Only after a symbol or space" after-symbol-or-space)
           (const :tag "After any non-space character" after-non-space)
           (const :tag "Almost everywhere" almost-everywhere))
@@ -393,6 +399,8 @@ previous expansion candidate in the menu."
   "[internal] Return non-nil if point is after something to expand."
   (cond ((eq fancy-dabbrev-expansion-context 'after-symbol)
          (thing-at-point 'symbol))
+        ((eq fancy-dabbrev-expansion-context 'after-symbol-followed-by-space)
+         (and (thing-at-point 'symbol) (thing-at-point 'whitespace)))
         ((eq fancy-dabbrev-expansion-context 'after-symbol-or-space)
          (and (not (eq (point) (line-beginning-position)))
               (save-excursion
