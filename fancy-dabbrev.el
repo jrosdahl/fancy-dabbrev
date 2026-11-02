@@ -305,6 +305,9 @@ represent major or minor modes."
 (defvar fancy-dabbrev--entered-abbrev nil
   "Current prefix that we want to expand.")
 
+(defvar fancy-dabbrev--abbrev-start nil
+  "Marker at the start of the current abbreviation or expansion.")
+
 (defvar fancy-dabbrev--preview-overlay nil
   "The state of the preview overlay.")
 
@@ -480,13 +483,9 @@ nil."
           (run-with-idle-timer
            fancy-dabbrev-preview-delay nil #'fancy-dabbrev--preview))))
 
-(defun fancy-dabbrev--abbrev-start-location ()
-  "[internal] Determine the start location of the abbreviation."
-  (- dabbrev--last-abbrev-location (length fancy-dabbrev--entered-abbrev)))
-
 (defun fancy-dabbrev--insert-expansion (expansion)
   "[internal] Insert EXPANSION at point."
-  (delete-region (fancy-dabbrev--abbrev-start-location) (point))
+  (delete-region fancy-dabbrev--abbrev-start (point))
   (insert expansion))
 
 (defun fancy-dabbrev--get-expansion ()
@@ -508,6 +507,8 @@ nil."
   "[internal] Return the first expansion candidate."
   (dabbrev--reset-global-variables)
   (setq fancy-dabbrev--entered-abbrev (dabbrev--abbrev-at-point))
+  (setq fancy-dabbrev--abbrev-start
+        (copy-marker (- (point) (length fancy-dabbrev--entered-abbrev))))
   (fancy-dabbrev--get-expansion))
 
 (defun fancy-dabbrev--preview ()
@@ -542,7 +543,7 @@ This function fetches the first expansion and inserts it at point."
 The menu is normally placed directly under point, but if point is
 near the right window edge or on a wrapped line, the menu is
 placed first at the next line to avoid a misrendered menu."
-  (let ((start (fancy-dabbrev--abbrev-start-location))
+  (let ((start fancy-dabbrev--abbrev-start)
         (line-width (- (line-end-position) (line-beginning-position))))
     (if (> line-width (window-width))
         (save-excursion
